@@ -2,7 +2,7 @@
 
 Aplicación de práctica creada para el curso de **Plan de Pruebas de Software**. Es una tienda escolar sencilla (catálogo, carrito, descuentos, checkout) pensada para que el equipo de estudiantes diseñe un plan de pruebas a partir de los requisitos funcionales, ejecute las pruebas sobre la aplicación en línea y **categorice cada hallazgo como Error, Defecto o Falla**.
 
-🔗 **Demo en línea:** _(agregar aquí la URL de Vercel)_
+🔗 **Demo en línea:** https://qa-tienda-pruebas.vercel.app
 
 ## Cómo ejecutar el proyecto localmente
 
