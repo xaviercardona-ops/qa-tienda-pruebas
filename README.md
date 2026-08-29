@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QA Tienda Escolar
 
-## Getting Started
+Aplicación de práctica creada para el curso de **Plan de Pruebas de Software**. Es una tienda escolar sencilla (catálogo, carrito, descuentos, checkout) pensada para que el equipo de estudiantes diseñe un plan de pruebas a partir de los requisitos funcionales, ejecute las pruebas sobre la aplicación en línea y **categorice cada hallazgo como Error, Defecto o Falla**.
 
-First, run the development server:
+🔗 **Demo en línea:** _(agregar aquí la URL de Vercel)_
+
+## Cómo ejecutar el proyecto localmente
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Alcance funcional
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+La aplicación simula el flujo de compra de una tienda escolar: catálogo de productos, carrito de compras, código de descuento, cálculo de impuestos y confirmación de pedido. No tiene backend ni base de datos: todo el estado vive en el navegador (React + `localStorage`).
 
-## Learn More
+## Requisitos funcionales
 
-To learn more about Next.js, take a look at the following resources:
+| ID | Requisito |
+|----|-----------|
+| RF-01 | El sistema debe mostrar un catálogo de al menos 6 productos, cada uno con nombre, precio unitario y stock disponible. |
+| RF-02 | El usuario debe poder agregar un producto al carrito indicando la cantidad deseada, sin superar el stock disponible de ese producto. |
+| RF-03 | El usuario debe poder aumentar o disminuir la cantidad de un producto ya agregado al carrito, respetando el stock disponible y un mínimo de 1 unidad. |
+| RF-04 | El usuario debe poder eliminar completamente un producto del carrito. |
+| RF-05 | El sistema debe calcular el subtotal del carrito como la suma de (precio unitario × cantidad) de cada producto agregado. |
+| RF-06 | El sistema debe permitir ingresar un código de descuento. Los códigos válidos son `DESC10` (10%) y `DESC20` (20%), aplicados sobre el subtotal. Solo se puede aplicar un código a la vez. |
+| RF-07 | El sistema debe calcular el IVA (19%) sobre el valor del subtotal **después** de aplicar el descuento. |
+| RF-08 | El sistema debe calcular y mostrar el total a pagar como: `subtotal − descuento + IVA`. |
+| RF-09 | Antes de confirmar la compra, el sistema debe validar que el nombre, el correo electrónico (formato válido) y la dirección hayan sido diligenciados correctamente. |
+| RF-10 | Al confirmar la compra, el sistema debe generar un número de pedido único, mostrar un resumen del pedido y vaciar el carrito para una nueva compra. |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Ejercicio propuesto
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. A partir de los requisitos anteriores, diseñar un plan de pruebas (casos de prueba, datos de entrada, resultado esperado).
+2. Ejecutar las pruebas sobre la demo en línea (o localmente).
+3. Documentar cada hallazgo y clasificarlo como **Error**, **Defecto** o **Falla**, sustentando la clasificación.
 
-## Deploy on Vercel
+## Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js (App Router) + TypeScript + Tailwind CSS. Sin backend: el estado del carrito se persiste en `localStorage`.
