@@ -123,11 +123,12 @@ export default function Home() {
       <header className="border-b border-neutral-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <h1 className="text-xl font-semibold">🏫 QA Tienda Escolar</h1>
-          {view === "shop" && (
-            <div className="text-sm text-neutral-600">
-              🛒 {cart.reduce((n, i) => n + i.qty, 0)} artículo(s)
-            </div>
-          )}
+          <div className="flex items-center gap-4 text-sm text-neutral-600">
+            <a href="/requisitos.html" target="_blank" rel="noopener" className="underline hover:text-neutral-900">
+              Requisitos
+            </a>
+            {view === "shop" && <span>🛒 {cart.reduce((n, i) => n + i.qty, 0)} artículo(s)</span>}
+          </div>
         </div>
       </header>
 

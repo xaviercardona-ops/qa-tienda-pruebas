@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Requisitos — QA Tienda Escolar</title>
+<meta name="description" content="Requisitos funcionales y ejercicio de plan de pruebas para la app QA Tienda Escolar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #eae7de;
+    --sheet: #fbfaf5;
+    --ink: #21241f;
+    --ink-soft: #5c6158;
+    --line: #dbd7c9;
+    --accent: #c85a1d;
+    --accent-soft: #f1dcc9;
+    --cat-error: #6b6f63;
+    --cat-error-soft: #e4e4dc;
+    --cat-defecto: #a5761f;
+    --cat-defecto-soft: #f1e2c2;
+    --cat-falla: #a8362a;
+    --cat-falla-soft: #f2d9d4;
+    --shadow: 0 1px 2px rgba(33,36,31,0.06), 0 12px 32px -16px rgba(33,36,31,0.28);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #17181a;
+      --sheet: #232420;
+      --ink: #ede9df;
+      --ink-soft: #a8a99a;
+      --line: #3a3b34;
+      --accent: #e58444;
+      --accent-soft: #3a2a1c;
+      --cat-error: #a3a696;
+      --cat-error-soft: #34352d;
+      --cat-defecto: #d9a648;
+      --cat-defecto-soft: #3a2f18;
+      --cat-falla: #dd7a6c;
+      --cat-falla-soft: #3a211d;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #17181a;
+    --sheet: #232420;
+    --ink: #ede9df;
+    --ink-soft: #a8a99a;
+    --line: #3a3b34;
+    --accent: #e58444;
+    --accent-soft: #3a2a1c;
+    --cat-error: #a3a696;
+    --cat-error-soft: #34352d;
+    --cat-defecto: #d9a648;
+    --cat-defecto-soft: #3a2f18;
+    --cat-falla: #dd7a6c;
+    --cat-falla-soft: #3a211d;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: clamp(20px, 5vw, 56px) clamp(16px, 4vw, 28px) 64px;
+  }
+
+  .sheet {
+    background: var(--sheet);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    padding: clamp(24px, 5vw, 56px);
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 48px);
+    line-height: 1.02;
+    letter-spacing: 0.002em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 24px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .tag-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 9px 14px;
+    border-radius: 2px;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .tag-link:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .tag-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tag-link .k { color: var(--ink-soft); }
+
+  hr.div {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 36px 0;
+  }
+
+  h2 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+
+  .section-note {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    max-width: 64ch;
+    margin: 0 0 20px;
+  }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 560px) {
+    .legend { grid-template-columns: 1fr; }
+  }
+
+  .legend-item {
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 14px 16px;
+    background: var(--paper);
+  }
+
+  .legend-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 8px;
+    position: relative;
+    top: -1px;
+  }
+
+  .legend-name {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .legend-def {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  .error   .legend-dot { background: var(--cat-error); }
+  .error   .legend-name { color: var(--cat-error); }
+  .defecto .legend-dot { background: var(--cat-defecto); }
+  .defecto .legend-name { color: var(--cat-defecto); }
+  .falla   .legend-dot { background: var(--cat-falla); }
+  .falla   .legend-name { color: var(--cat-falla); }
+
+  .rf-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rf-row {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 18px;
+    padding: 16px 4px;
+    border-top: 1px solid var(--line);
+    transition: background 120ms ease;
+  }
+  .rf-row:last-child { border-bottom: 1px solid var(--line); }
+  .rf-row:hover { background: var(--paper); }
+
+  @media (max-width: 520px) {
+    .rf-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  .rf-id {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+
+  .rf-text {
+    font-size: 16px;
+  }
+
+  .rf-text code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.86em;
+    background: var(--accent-soft);
+    color: var(--ink);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+  }
+
+  .deliverables {
+    margin: 0;
+    padding-left: 22px;
+  }
+  .deliverables li {
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+  .deliverables li::marker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    justify-content: space-between;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  footer a { color: var(--ink-soft); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="sheet">
+    <p class="eyebrow">Práctica · Plan de pruebas de software</p>
+    <h1>QA Tienda Escolar</h1>
+    <p class="lede">
+      Una tienda escolar sencilla — catálogo, carrito, descuentos, checkout — construida para este curso.
+      El código es público y el sistema está en línea. La tarea del equipo: diseñar el plan de pruebas
+      a partir de los requisitos, ejecutarlo, y clasificar cada hallazgo como <strong>error</strong>,
+      <strong>defecto</strong> o <strong>falla</strong>.
+    </p>
+    <div class="links">
+      <a class="tag-link" href="/" target="_blank" rel="noopener">
+        <span class="k">DEMO</span> qa-tienda-pruebas.vercel.app
+      </a>
+      <a class="tag-link" href="https://github.com/xaviercardona-ops/qa-tienda-pruebas" target="_blank" rel="noopener">
+        <span class="k">REPO</span> github.com/xaviercardona-ops/qa-tienda-pruebas
+      </a>
+    </div>
+
+    <hr class="div">
+
+    <h2>Cómo se clasifica un hallazgo</h2>
+    <p class="section-note">
+      Al reportar algo que no funciona como se espera, distingan en qué punto de la cadena ocurrió:
+    </p>
+    <div class="legend">
+      <div class="legend-item error">
+        <div><span class="legend-dot"></span><span class="legend-name">Error</span></div>
+        <p class="legend-def">La equivocación humana durante el desarrollo: algo mal interpretado, mal calculado o no probado.</p>
+      </div>
+      <div class="legend-item defecto">
+        <div><span class="legend-dot"></span><span class="legend-name">Defecto</span></div>
+        <p class="legend-def">Lo que ese error dejó en el código: la línea o lógica concreta que está mal.</p>
+      </div>
+      <div class="legend-item falla">
+        <div><span class="legend-dot"></span><span class="legend-name">Falla</span></div>
+        <p class="legend-def">Lo que ustedes observan al usar el sistema: el comportamiento incorrecto en ejecución.</p>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <h2>Requisitos funcionales</h2>
+    <p class="section-note">Base para diseñar los casos de prueba.</p>
+    <div class="rf-list">
+      <div class="rf-row"><div class="rf-id">RF-01</div><div class="rf-text">El sistema debe mostrar un catálogo de al menos 6 productos, cada uno con nombre, precio unitario y stock disponible.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-02</div><div class="rf-text">El usuario debe poder agregar un producto al carrito indicando la cantidad deseada, sin superar el stock disponible de ese producto.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-03</div><div class="rf-text">El usuario debe poder aumentar o disminuir la cantidad de un producto ya agregado al carrito, respetando el stock disponible y un mínimo de 1 unidad.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-04</div><div class="rf-text">El usuario debe poder eliminar completamente un producto del carrito.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-05</div><div class="rf-text">El sistema debe calcular el subtotal del carrito como la suma de (precio unitario × cantidad) de cada producto agregado.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-06</div><div class="rf-text">El sistema debe permitir ingresar un código de descuento. Los códigos válidos son <code>DESC10</code> (10%) y <code>DESC20</code> (20%), aplicados sobre el subtotal. Solo se puede aplicar un código a la vez.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-07</div><div class="rf-text">El sistema debe calcular el IVA (19%) sobre el valor del subtotal después de aplicar el descuento.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-08</div><div class="rf-text">El sistema debe calcular y mostrar el total a pagar como: subtotal − descuento + IVA.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-09</div><div class="rf-text">Antes de confirmar la compra, el sistema debe validar que el nombre, el correo electrónico (formato válido) y la dirección hayan sido diligenciados correctamente.</div></div>
+      <div class="rf-row"><div class="rf-id">RF-10</div><div class="rf-text">Al confirmar la compra, el sistema debe generar un número de pedido único, mostrar un resumen del pedido y vaciar el carrito para una nueva compra.</div></div>
+    </div>
+
+    <hr class="div">
+
+    <h2>Entregables por equipo</h2>
+    <ol class="deliverables">
+      <li>Plan de pruebas: casos de prueba derivados de RF-01 a RF-10, con datos de entrada y resultado esperado.</li>
+      <li>Evidencia de ejecución de cada caso (capturas o registro de resultado obtenido).</li>
+      <li>Lista de hallazgos, cada uno clasificado como error, defecto o falla, con su justificación.</li>
+    </ol>
+
+    <footer>
+      <span>QA Tienda Escolar — práctica de Plan de Pruebas</span>
+      <span>Next.js · sin backend · estado en el navegador</span>
+    </footer>
+  </div>
+</div>
+</body>
+</html>
