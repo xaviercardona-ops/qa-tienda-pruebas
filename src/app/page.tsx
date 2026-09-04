@@ -127,6 +127,9 @@ export default function Home() {
             <a href="/requisitos.html" target="_blank" rel="noopener" className="underline hover:text-neutral-900">
               Requisitos
             </a>
+            <a href="/historias-usuario.html" target="_blank" rel="noopener" className="underline hover:text-neutral-900">
+              Taller ágil
+            </a>
             {view === "shop" && <span>🛒 {cart.reduce((n, i) => n + i.qty, 0)} artículo(s)</span>}
           </div>
         </div>

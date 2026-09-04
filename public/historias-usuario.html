@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taller ágil — QA Tienda Escolar</title>
+<meta name="description" content="Ejercicio en clase: de historias de usuario a criterios de aceptación y casos de prueba, sobre la app QA Tienda Escolar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #eae7de;
+    --sheet: #fbfaf5;
+    --ink: #21241f;
+    --ink-soft: #5c6158;
+    --line: #dbd7c9;
+    --accent: #c85a1d;
+    --accent-soft: #f1dcc9;
+    --cat-error: #6b6f63;
+    --cat-error-soft: #e4e4dc;
+    --cat-defecto: #a5761f;
+    --cat-defecto-soft: #f1e2c2;
+    --cat-falla: #a8362a;
+    --cat-falla-soft: #f2d9d4;
+    --ok: #4a7a3f;
+    --shadow: 0 1px 2px rgba(33,36,31,0.06), 0 12px 32px -16px rgba(33,36,31,0.28);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #17181a;
+      --sheet: #232420;
+      --ink: #ede9df;
+      --ink-soft: #a8a99a;
+      --line: #3a3b34;
+      --accent: #e58444;
+      --accent-soft: #3a2a1c;
+      --cat-error: #a3a696;
+      --cat-error-soft: #34352d;
+      --cat-defecto: #d9a648;
+      --cat-defecto-soft: #3a2f18;
+      --cat-falla: #dd7a6c;
+      --cat-falla-soft: #3a211d;
+      --ok: #7fb56f;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #17181a;
+    --sheet: #232420;
+    --ink: #ede9df;
+    --ink-soft: #a8a99a;
+    --line: #3a3b34;
+    --accent: #e58444;
+    --accent-soft: #3a2a1c;
+    --cat-error: #a3a696;
+    --cat-error-soft: #34352d;
+    --cat-defecto: #d9a648;
+    --cat-defecto-soft: #3a2f18;
+    --cat-falla: #dd7a6c;
+    --cat-falla-soft: #3a211d;
+    --ok: #7fb56f;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: clamp(20px, 5vw, 56px) clamp(16px, 4vw, 28px) 64px;
+  }
+
+  .sheet {
+    background: var(--sheet);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    padding: clamp(24px, 5vw, 56px);
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 48px);
+    line-height: 1.02;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 24px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .tag-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 9px 14px;
+    border-radius: 2px;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .tag-link:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .tag-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tag-link .k { color: var(--ink-soft); }
+
+  hr.div {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 36px 0;
+  }
+
+  h2 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+
+  h3 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+
+  .section-note {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    max-width: 64ch;
+    margin: 0 0 20px;
+  }
+
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+  }
+  .pipeline .step {
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 6px 12px;
+    background: var(--paper);
+  }
+  .pipeline .arrow { color: var(--ink-soft); }
+
+  .gherkin-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
+    padding: 6px 0;
+  }
+  .gherkin-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .criterio {
+    border-top: 1px solid var(--line);
+    padding: 12px 0;
+  }
+  .criterio:first-of-type { border-top: none; padding-top: 4px; }
+
+  .example-box {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ok);
+    border-radius: 3px;
+    padding: 18px 20px;
+    background: var(--paper);
+    margin-bottom: 8px;
+  }
+  .example-tag {
+    display: inline-block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ok);
+    margin-bottom: 8px;
+  }
+
+  table.cp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .cp-table th, .cp-table td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .cp-table th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .cp-table code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.92em;
+    background: var(--accent-soft);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+  }
+
+  .story-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .story-card {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 18px;
+    padding: 16px 4px;
+    border-top: 1px solid var(--line);
+  }
+  .story-card:last-child { border-bottom: 1px solid var(--line); }
+  .story-id {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .story-title {
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .story-text {
+    font-size: 16px;
+  }
+
+  .steps-list {
+    margin: 0;
+    padding-left: 22px;
+  }
+  .steps-list li {
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+  .steps-list li::marker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    justify-content: space-between;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 520px) {
+    .story-card { grid-template-columns: 1fr; gap: 4px; }
+    .gherkin-row { grid-template-columns: 1fr; gap: 2px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="sheet">
+    <p class="eyebrow">Ejercicio en clase · Enfoque ágil</p>
+    <h1>De historia de usuario a caso de prueba</h1>
+    <p class="lede">
+      Mismo sistema de siempre — QA Tienda Escolar —, pero esta vez sin lista de requisitos numerada.
+      Van a recibir historias de usuario, y su trabajo es escribir los criterios de aceptación y,
+      a partir de esos criterios, casos de prueba que puedan ejecutar contra la demo en vivo.
+    </p>
+    <div class="links">
+      <a class="tag-link" href="/" target="_blank" rel="noopener">
+        <span class="k">DEMO</span> qa-tienda-pruebas.vercel.app
+      </a>
+      <a class="tag-link" href="/requisitos.html" target="_blank" rel="noopener">
+        <span class="k">VER TAMBIÉN</span> requisitos.html
+      </a>
+    </div>
+
+    <hr class="div">
+
+    <h2>La cadena de trabajo</h2>
+    <p class="section-note">Cada historia se descompone así, de lo general a lo ejecutable:</p>
+    <div class="pipeline">
+      <span class="step">Historia de usuario</span>
+      <span class="arrow">→</span>
+      <span class="step">Criterio de aceptación (Dado / Cuando / Entonces)</span>
+      <span class="arrow">→</span>
+      <span class="step">Caso de prueba (datos + resultado esperado)</span>
+    </div>
+    <p class="section-note">
+      Una historia de usuario es corta a propósito ("Como &lt;rol&gt;, quiero &lt;funcionalidad&gt;, para &lt;beneficio&gt;").
+      Los <strong>criterios de aceptación</strong> son las reglas concretas que dicen cuándo esa historia está bien hecha —
+      se escriben como <strong>Dado</strong> (una condición inicial), <strong>Cuando</strong> (una acción) y <strong>Entonces</strong>
+      (el resultado esperado). Un <strong>caso de prueba</strong> toma un criterio y le pone datos reales para poder ejecutarlo.
+    </p>
+
+    <hr class="div">
+
+    <h2>Ejemplo resuelto</h2>
+    <p class="section-note">Así de detallado esperamos que quede cada historia que ustedes resuelvan.</p>
+
+    <div class="example-box">
+      <span class="example-tag">HU-00 · Ya resuelta</span>
+      <h3>Ver el catálogo de productos</h3>
+      <p class="story-text" style="margin-top:0">
+        Como cliente que quiere comprar útiles escolares, quiero ver el catálogo con nombre, precio y
+        stock de cada producto, para decidir qué agregar a mi carrito.
+      </p>
+
+      <div class="criterio">
+        <strong>CA1</strong>
+        <div class="gherkin-row"><div class="gherkin-label">Dado</div><div>que entro a la tienda</div></div>
+        <div class="gherkin-row"><div class="gherkin-label">Cuando</div><div>la página termina de cargar</div></div>
+        <div class="gherkin-row"><div class="gherkin-label">Entonces</div><div>veo al menos 6 productos distintos</div></div>
+      </div>
+      <div class="criterio">
+        <strong>CA2</strong>
+        <div class="gherkin-row"><div class="gherkin-label">Dado</div><div>un producto del catálogo</div></div>
+        <div class="gherkin-row"><div class="gherkin-label">Cuando</div><div>lo veo en la lista</div></div>
+        <div class="gherkin-row"><div class="gherkin-label">Entonces</div><div>muestra su nombre, su precio unitario y su stock disponible</div></div>
+      </div>
+
+      <table class="cp-table">
+        <thead>
+          <tr><th>Caso</th><th>Relacionado con</th><th>Pasos / datos</th><th>Resultado esperado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>CP-00.1</code></td><td>CA1</td><td>Abrir la tienda</td><td>Se listan 8 productos</td></tr>
+          <tr><td><code>CP-00.2</code></td><td>CA2</td><td>Inspeccionar "Mochila escolar"</td><td>Nombre "Mochila escolar", precio $65.000, stock 6</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="div">
+
+    <h2>Instrucciones para hoy</h2>
+    <ol class="steps-list">
+      <li>Formen grupos. Cada grupo recibe una de las 5 historias de abajo (si hay pocos grupos, uno puede tomar 2 historias).</li>
+      <li>En 15 minutos: escriban 2 a 4 criterios de aceptación (formato Dado/Cuando/Entonces) y al menos un caso de prueba ejecutable por criterio, con datos concretos.</li>
+      <li>Ejecuten sus casos de prueba contra la demo en vivo y anoten el resultado real junto al esperado.</li>
+      <li>Compartan en 3 minutos: su historia, sus criterios, y si encontraron alguna diferencia entre lo esperado y lo real.</li>
+    </ol>
+
+    <hr class="div">
+
+    <h2>Historias para resolver en grupo</h2>
+    <div class="story-list">
+      <div class="story-card">
+        <div class="story-id">HU-01</div>
+        <div>
+          <p class="story-title">Agregar y ajustar productos en el carrito</p>
+          <p class="story-text">Como cliente, quiero agregar productos a mi carrito y ajustar sus cantidades, para armar mi pedido antes de pagar sin superar las unidades disponibles.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-02</div>
+        <div>
+          <p class="story-title">Ver el total correcto de mi compra</p>
+          <p class="story-text">Como cliente, quiero ver el subtotal, el descuento, el IVA y el total de mi carrito, para saber con exactitud cuánto voy a pagar antes de confirmar.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-03</div>
+        <div>
+          <p class="story-title">Aplicar un código de descuento</p>
+          <p class="story-text">Como cliente, quiero ingresar un código de descuento en mi carrito, para pagar menos si tengo un cupón válido.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-04</div>
+        <div>
+          <p class="story-title">Diligenciar mis datos de envío</p>
+          <p class="story-text">Como cliente, quiero ingresar mi nombre, correo y dirección antes de pagar, para que mi pedido pueda ser entregado correctamente.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-05</div>
+        <div>
+          <p class="story-title">Confirmar mi pedido</p>
+          <p class="story-text">Como cliente, quiero recibir un número de pedido y un resumen al finalizar mi compra, para tener constancia de lo que compré.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <span>QA Tienda Escolar — taller ágil de Plan de Pruebas</span>
+      <span>Historia → criterio → caso de prueba</span>
+    </footer>
+  </div>
+</div>
+</body>
+</html>
