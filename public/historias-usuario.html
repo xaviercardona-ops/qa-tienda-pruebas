@@ -363,7 +363,7 @@
     <p class="section-note">Así de detallado esperamos que quede cada historia que ustedes resuelvan.</p>
 
     <div class="example-box">
-      <span class="example-tag">HU-00 · Ya resuelta</span>
+      <span class="example-tag">HU-01 · Ya resuelta</span>
       <h3>Ver el catálogo de productos</h3>
       <p class="story-text" style="margin-top:0">
         Como cliente que quiere comprar útiles escolares, quiero ver el catálogo con nombre, precio y
@@ -388,8 +388,8 @@
           <tr><th>Caso</th><th>Relacionado con</th><th>Pasos / datos</th><th>Resultado esperado</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>CP-00.1</code></td><td>CA1</td><td>Abrir la tienda</td><td>Se listan 8 productos</td></tr>
-          <tr><td><code>CP-00.2</code></td><td>CA2</td><td>Inspeccionar "Mochila escolar"</td><td>Nombre "Mochila escolar", precio $65.000, stock 6</td></tr>
+          <tr><td><code>CP-01.1</code></td><td>CA1</td><td>Abrir la tienda</td><td>Se listan 8 productos</td></tr>
+          <tr><td><code>CP-01.2</code></td><td>CA2</td><td>Inspeccionar "Mochila escolar"</td><td>Nombre "Mochila escolar", precio $65.000, stock 6</td></tr>
         </tbody>
       </table>
     </div>
@@ -398,7 +398,7 @@
 
     <h2>Instrucciones para hoy</h2>
     <ol class="steps-list">
-      <li>Formen grupos. Cada grupo recibe una de las 5 historias de abajo (si hay pocos grupos, uno puede tomar 2 historias).</li>
+      <li>Formen grupos. Cada grupo recibe una de las 9 historias de abajo (si hay pocos grupos, uno puede tomar 2 o 3 historias; si hay más, alguna puede repartirse entre dos grupos).</li>
       <li>En 15 minutos: escriban 2 a 4 criterios de aceptación (formato Dado/Cuando/Entonces) y al menos un caso de prueba ejecutable por criterio, con datos concretos.</li>
       <li>Ejecuten sus casos de prueba contra la demo en vivo y anoten el resultado real junto al esperado.</li>
       <li>Compartan en 3 minutos: su historia, sus criterios, y si encontraron alguna diferencia entre lo esperado y lo real.</li>
@@ -407,37 +407,66 @@
     <hr class="div">
 
     <h2>Historias para resolver en grupo</h2>
+    <p class="section-note">Cada una corresponde a uno de los requisitos funcionales de <code>requisitos.html</code>, por si quieren revisarlo como referencia.</p>
     <div class="story-list">
-      <div class="story-card">
-        <div class="story-id">HU-01</div>
-        <div>
-          <p class="story-title">Agregar y ajustar productos en el carrito</p>
-          <p class="story-text">Como cliente, quiero agregar productos a mi carrito y ajustar sus cantidades, para armar mi pedido antes de pagar sin superar las unidades disponibles.</p>
-        </div>
-      </div>
       <div class="story-card">
         <div class="story-id">HU-02</div>
         <div>
-          <p class="story-title">Ver el total correcto de mi compra</p>
-          <p class="story-text">Como cliente, quiero ver el subtotal, el descuento, el IVA y el total de mi carrito, para saber con exactitud cuánto voy a pagar antes de confirmar.</p>
+          <p class="story-title">Agregar productos al carrito</p>
+          <p class="story-text">Como cliente, quiero agregar productos a mi carrito indicando la cantidad que deseo, para armar mi pedido sin superar las unidades disponibles.</p>
         </div>
       </div>
       <div class="story-card">
         <div class="story-id">HU-03</div>
+        <div>
+          <p class="story-title">Modificar la cantidad de un producto en el carrito</p>
+          <p class="story-text">Como cliente, quiero aumentar o disminuir la cantidad de un producto ya agregado a mi carrito, para ajustar mi pedido antes de pagar.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-04</div>
+        <div>
+          <p class="story-title">Eliminar un producto del carrito</p>
+          <p class="story-text">Como cliente, quiero eliminar un producto de mi carrito, para corregir mi pedido si cambio de opinión.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-05</div>
+        <div>
+          <p class="story-title">Ver el subtotal de mi compra</p>
+          <p class="story-text">Como cliente, quiero ver el subtotal de mi carrito, para saber cuánto suman los productos antes de impuestos y descuentos.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-06</div>
         <div>
           <p class="story-title">Aplicar un código de descuento</p>
           <p class="story-text">Como cliente, quiero ingresar un código de descuento en mi carrito, para pagar menos si tengo un cupón válido.</p>
         </div>
       </div>
       <div class="story-card">
-        <div class="story-id">HU-04</div>
+        <div class="story-id">HU-07</div>
+        <div>
+          <p class="story-title">Ver el IVA de mi compra</p>
+          <p class="story-text">Como cliente, quiero ver cuánto IVA se suma a mi compra, para saber el impuesto exacto que estoy pagando.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-08</div>
+        <div>
+          <p class="story-title">Ver el total a pagar</p>
+          <p class="story-text">Como cliente, quiero ver el total final de mi compra, para saber exactamente cuánto voy a pagar antes de confirmar.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-id">HU-09</div>
         <div>
           <p class="story-title">Diligenciar mis datos de envío</p>
           <p class="story-text">Como cliente, quiero ingresar mi nombre, correo y dirección antes de pagar, para que mi pedido pueda ser entregado correctamente.</p>
         </div>
       </div>
       <div class="story-card">
-        <div class="story-id">HU-05</div>
+        <div class="story-id">HU-10</div>
         <div>
           <p class="story-title">Confirmar mi pedido</p>
           <p class="story-text">Como cliente, quiero recibir un número de pedido y un resumen al finalizar mi compra, para tener constancia de lo que compré.</p>
