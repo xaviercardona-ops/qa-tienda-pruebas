@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Backlog de pruebas — QA Tienda Escolar</title>
-<meta name="description" content="20 historias de usuario con criterios de aceptación para probar la tienda, reportar bugs en Jira y depurarlos.">
+<meta name="description" content="20 historias de usuario con criterios de aceptación: cada equipo arma su plan de pruebas como tareas en Jira, prueba, reporta bugs y depura.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -334,21 +334,27 @@
   button.copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 6px; }
   @media (max-width: 680px) { .pair { grid-template-columns: 1fr; } }
+  .stack { display: flex; flex-direction: column; gap: 12px; margin: 14px 0 6px; }
   .ex { border: 1px solid var(--line); border-radius: 3px; padding: 12px 14px; background: var(--paper); font-size: 14.5px; }
   .ex.bad { border-left: 3px solid var(--cat-falla); }
   .ex.good { border-left: 3px solid var(--ok); }
+  .ex.plan { border-left: 3px solid var(--accent); }
   .ex .tag { display: block; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
   .ex.bad .tag { color: var(--cat-falla); }
   .ex.good .tag { color: var(--ok); }
+  .ex.plan .tag { color: var(--accent); }
   .ex p { margin: 0 0 6px; }
   .ex p:last-child { margin: 0; }
+  .ex .cp { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.5; margin: 0 0 8px; }
   table.plain { width: 100%; border-collapse: collapse; font-size: 14.5px; }
   .table-wrap { overflow-x: auto; }
   table.plain th, table.plain td { text-align: left; padding: 9px 12px; border-top: 1px solid var(--line); vertical-align: top; }
   table.plain thead th { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); border-top: none; border-bottom: 1px solid var(--line); }
+  table.plain code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.86em; background: var(--accent-soft); padding: 0.1em 0.4em; border-radius: 2px; }
   .sev { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: 13px; white-space: nowrap; }
   .tools { margin: 0; padding-left: 20px; }
   .tools li { margin-bottom: 6px; font-size: 15.5px; }
+  .section-note code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.86em; background: var(--accent-soft); padding: 0.1em 0.4em; border-radius: 2px; }
   .epic-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 30px 0 2px; }
   .epic-head h2 { margin: 0; }
   .epic-meta { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-soft); }
@@ -368,9 +374,9 @@
     <p class="eyebrow">Validación de software · Sprint de pruebas</p>
     <h1>Backlog de pruebas: 20 historias de usuario</h1>
     <p class="lede">
-      Este es el backlog del sprint. Prueben la tienda en vivo contra los criterios de aceptación de
-      cada historia, reporten en Jira cada bug que encuentren y después depuren: ubiquen la causa en
-      el código. Es la práctica de lo visto en QA, testing y debugging.
+      Este es el backlog del sprint y <strong>cada equipo prueba las 20 historias</strong>. Primero arman su plan de
+      pruebas como tareas en Jira; luego lo ejecutan contra la tienda en vivo, reportan cada bug que encuentren y, al final,
+      depuran: ubican la causa en el código. Es la práctica de lo visto en QA, testing y debugging.
     </p>
     <div class="links">
       <a class="tag-link" href="https://qa-tienda-pruebas.vercel.app" target="_blank" rel="noopener"><span class="k">DEMO</span> qa-tienda-pruebas.vercel.app</a>
@@ -382,24 +388,101 @@
     <hr class="div">
 
     <h2>Cómo trabajamos</h2>
-    <p class="section-note">Cuatro pasos por cada bloque de historias que les toque.</p>
+    <p class="section-note">Cinco pasos. Todo el equipo cubre las 20 historias: dentro del equipo pueden repartirse el trabajo para avanzar, pero el plan y los reportes son del equipo completo.</p>
     <ol class="steps4">
-      <li><div><strong>Prueben</strong><span>Verifiquen cada criterio de aceptación contra la tienda en vivo y anótenlo como Pasa o Falla (una tabla simple basta: criterio, resultado, bug asociado). Los que pasan también cuentan: no todo es un bug.</span></div></li>
-      <li><div><strong>Reporten</strong><span>Cada criterio que falla es candidato a bug: créenlo en Jira, un problema por issue, enlazado a su historia. Antes de crear uno, busquen si alguien ya lo reportó.</span></div></li>
+      <li><div><strong>Planeen</strong><span>Armen su plan de pruebas en Jira como <em>tareas</em>: una tarea general y una por historia, cada una con sus casos de prueba (al menos uno por criterio de aceptación, con datos concretos y resultado esperado). Enlacen cada tarea a su historia.</span></div></li>
+      <li><div><strong>Ejecuten</strong><span>Corran cada caso contra la tienda en vivo, anoten Pasa o Falla en la tarea y muévanla a Done cuando termine. Un caso que pasa también cuenta: no todo es un bug.</span></div></li>
+      <li><div><strong>Reporten</strong><span>Cada caso que falla se convierte en un Bug de Jira: un problema por issue, enlazado a su tarea y a su historia. Busquen duplicados solo entre los issues de su equipo.</span></div></li>
       <li><div><strong>Depuren</strong><span>Reproduzcan con los pasos mínimos, aíslen el problema y ubiquen el defecto en el código del repositorio. Agreguen la causa raíz y una corrección propuesta como comentario del bug.</span></div></li>
-      <li><div><strong>Triage</strong><span>El docente revisa los reportes: confirma, marca duplicados, "no es un bug" o "no reproducible", y fija la prioridad. El enlace al proyecto de Jira lo comparte en clase.</span></div></li>
+      <li><div><strong>Triage</strong><span>El docente revisa planes y reportes: confirma, marca "no es un bug" o "no reproducible" y fija la prioridad. El enlace al proyecto de Jira lo comparte en clase.</span></div></li>
     </ol>
-    <p class="section-note" style="margin-top:14px"><strong>Tiempo sugerido:</strong> 10 min de arranque · 50 min de prueba y reporte · 25 min de depuración · 15 min de triage y cierre.</p>
+    <p class="section-note" style="margin-top:14px"><strong>Tiempo sugerido</strong> (el docente lo ajusta a la clase): 10 min de arranque · 25 min de plan de pruebas · 50 min de ejecución y reporte · 25 min de depuración · 15 min de triage y cierre.</p>
+
+    <hr class="div">
+
+    <h2>Cómo se organiza en Jira</h2>
+    <div class="table-wrap">
+      <table class="plain">
+        <thead><tr><th>Qué</th><th>Tipo en Jira</th><th>Quién lo crea</th><th>Etiquetas</th></tr></thead>
+        <tbody>
+          <tr><td>Las 20 historias</td><td>Story</td><td>El docente (ya importadas)</td><td>el bloque (ej. <code>carrito</code>)</td></tr>
+          <tr><td>Plan de pruebas · General</td><td>Task (Tarea)</td><td>Cada equipo</td><td><code>equipo-N</code> <code>plan-de-pruebas</code></td></tr>
+          <tr><td>Plan de pruebas · US-xx (20 tareas)</td><td>Task (Tarea)</td><td>Cada equipo</td><td><code>equipo-N</code> <code>plan-de-pruebas</code> <code>us-xx</code></td></tr>
+          <tr><td>Bugs encontrados</td><td>Bug</td><td>Cada equipo</td><td><code>equipo-N</code> <code>us-xx</code> <code>sev-1</code> a <code>sev-4</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-note" style="margin-top:14px">
+      Todo lo que creen lleva la etiqueta de su equipo (<code>equipo-1</code>, <code>equipo-2</code>…): filtren siempre por ella y no consulten los
+      issues de otros equipos. Vínculos ("relates to"): cada tarea con su historia; cada bug con su tarea y con su historia.
+    </p>
+
+    <hr class="div">
+
+    <h2>Cómo armar el plan de pruebas</h2>
+    <p class="section-note">
+      El <strong>Resumen</strong> de cada tarea es <code>Plan de pruebas · US-xx · título</code> (y <code>Plan de pruebas · General</code> para la general).
+      Peguen la plantilla en la <strong>Descripción</strong>. En la tarea por historia escriban al menos un caso por criterio, con datos concretos, y
+      agreguen más donde el criterio invite a probar límites, clases de datos o cambios de estado.
+    </p>
+
+    <h3>Tarea general</h3>
+    <pre class="template" id="plantilla-general">Plan de pruebas · General
+
+Alcance: historias que se prueban y qué queda fuera
+Entorno: navegador(es) y versión · sistema operativo · dispositivo · URL de la tienda
+Estrategia y técnicas: (funcional por criterio, valores límite, partición de equivalencia, transición de estados, accesibilidad, móvil…)
+Criterios de entrada: cuándo empezamos a ejecutar
+Criterios de salida: cuándo damos por terminada la prueba
+Riesgos y supuestos:
+Equipo y responsabilidades:
+Cronograma:</pre>
+    <button class="copy" type="button" data-copy="plantilla-general">Copiar plantilla</button>
+
+    <h3 style="margin-top:22px">Tarea por historia</h3>
+    <pre class="template" id="plantilla-tarea">Historia: US-xx · título
+Objetivo: qué se quiere comprobar
+Técnica(s): límites / equivalencia / estados / exploratoria…
+
+CP-xx.1 · Criterio CA1
+- Precondiciones:
+- Pasos:
+- Datos de entrada:
+- Resultado esperado:
+- Resultado obtenido: Pasa / Falla (bug: clave)
+
+CP-xx.2 · Criterio CA2
+- Precondiciones:
+- Pasos:
+- Datos de entrada:
+- Resultado esperado:
+- Resultado obtenido: Pasa / Falla (bug: clave)</pre>
+    <button class="copy" type="button" data-copy="plantilla-tarea">Copiar plantilla</button>
+
+    <h3 style="margin-top:22px">Un ejemplo completo (ficticio)</h3>
+    <p class="section-note" style="margin-bottom:0">La tienda no tiene lista de deseos; sirve solo para mostrar la cadena historia → tarea → bug.</p>
+    <div class="stack">
+      <div class="ex plan">
+        <span class="tag">Historia (la importa el docente)</span>
+        <p><strong>US-99 · Guardar un producto en mi lista de deseos.</strong> CA1: Dado un producto del catálogo, cuando presiono «Guardar», entonces aparece una vez en «Mi lista». CA2: Dado un producto ya guardado, cuando lo intento guardar otra vez, entonces no se duplica y veo «Ya está en tu lista».</p>
+      </div>
+      <div class="ex plan">
+        <span class="tag">Tarea (la crea el equipo) · etiquetas: equipo-3, plan-de-pruebas, us-99</span>
+        <p><strong>Plan de pruebas · US-99 · Guardar en la lista de deseos</strong></p>
+        <p class="cp">CP-99.1 · CA1 — Precond.: lista vacía. Pasos: 1. Presionar «Guardar» en «Cuaderno universitario». 2. Abrir «Mi lista». Esperado: el cuaderno aparece una vez. Obtenido: Pasa.</p>
+        <p class="cp">CP-99.2 · CA2 — Precond.: «Cuaderno universitario» ya guardado. Pasos: 1. Presionar «Guardar» otra vez. 2. Abrir «Mi lista». Esperado: sin duplicado y aviso «Ya está en tu lista». Obtenido: Falla (bug: PRJ-45).</p>
+      </div>
+    </div>
 
     <hr class="div">
 
     <h2>Cómo reportar un bug en Jira</h2>
     <p class="section-note">
       Tipo de issue <strong>Bug</strong>. En el <strong>Resumen</strong> escriban <code>[Módulo] qué falla — cuándo</code>.
-      Peguen la plantilla en la <strong>Descripción</strong>, agreguen la etiqueta de su historia (ej. <code>us-04</code>) y la de
-      severidad (<code>sev-1</code> a <code>sev-4</code>), y enlacen el bug con su historia (vínculo "relates to").
+      Peguen la plantilla en la <strong>Descripción</strong>, agreguen las etiquetas (<code>equipo-N</code>, <code>us-xx</code> y <code>sev-1</code> a <code>sev-4</code>)
+      y enlacen el bug ("relates to") con su tarea de plan de pruebas y con su historia.
     </p>
-    <pre class="template" id="plantilla">Historia: US-xx  ·  Criterio: CAx
+    <pre class="template" id="plantilla-bug">Historia: US-xx  ·  Criterio: CAx  ·  Caso de prueba: CP-xx.y (tarea: clave)
 Severidad propuesta: S1 / S2 / S3 / S4
 
 Precondiciones:
@@ -423,21 +506,21 @@ Depuración (después de reproducir):
 - Defecto (archivo y función o línea):
 - Error (qué se pensó mal al programarlo):
 - Corrección propuesta:</pre>
-    <button class="copy" type="button" data-copy="plantilla">Copiar plantilla</button>
+    <button class="copy" type="button" data-copy="plantilla-bug">Copiar plantilla</button>
 
     <h3 style="margin-top:22px">Un reporte débil y uno sólido</h3>
-    <p class="section-note" style="margin-bottom:0">Ejemplo ficticio: la tienda no tiene lista de deseos; sirve solo para mostrar la diferencia.</p>
+    <p class="section-note" style="margin-bottom:0">Continúa el ejemplo ficticio: el bug sale del caso CP-99.2 que falló.</p>
     <div class="pair">
       <div class="ex bad">
         <span class="tag">Débil</span>
         <p><strong>Resumen:</strong> No funciona la lista</p>
-        <p><strong>Descripción:</strong> Hice clic y no pasó nada. Por favor arreglar.</p>
+        <p><strong>Descripción:</strong> Hice clic y salió raro. Por favor arreglar.</p>
       </div>
       <div class="ex good">
         <span class="tag">Sólido</span>
-        <p><strong>Resumen:</strong> [Lista de deseos] El botón «Guardar» no responde con la lista vacía</p>
-        <p><strong>Pasos:</strong> 1. Abrir «Mi lista» sin productos. 2. Presionar «Guardar».</p>
-        <p><strong>Esperado (US-xx CA2):</strong> aparece «Lista guardada». <strong>Obtenido:</strong> no ocurre nada ni hay mensaje de error.</p>
+        <p><strong>Resumen:</strong> [Lista de deseos] Guardar dos veces el mismo producto lo duplica en «Mi lista»</p>
+        <p><strong>Pasos:</strong> 1. Guardar «Cuaderno universitario». 2. Presionar «Guardar» otra vez. 3. Abrir «Mi lista».</p>
+        <p><strong>Esperado (US-99 · CA2 · CP-99.2):</strong> sin duplicado y aviso «Ya está en tu lista». <strong>Obtenido:</strong> dos filas del cuaderno y sin aviso.</p>
         <p><strong>Entorno:</strong> Chrome 128 · Windows 11 · GIF adjunto. <strong>Severidad propuesta:</strong> S3.</p>
       </div>
     </div>
@@ -475,8 +558,8 @@ Depuración (después de reproducir):
 
     <hr class="div">
 
-    <h2>Reparto sugerido</h2>
-    <p class="section-note">Un bloque por equipo. Si hay menos equipos, combinen los bloques pequeños (Catálogo con Calidad de uso; Confirmación con Descuentos e impuestos); si hay más, partan Carrito y Checkout.</p>
+    <h2>Mapa del backlog</h2>
+    <p class="section-note">Los seis bloques son para todos los equipos: recórranlos en el orden que prefieran. Esta tabla es solo un índice para planear.</p>
     <div class="table-wrap">
       <table class="plain">
         <thead><tr><th>Bloque</th><th>Historias</th><th>Criterios</th></tr></thead>
@@ -759,18 +842,18 @@ Depuración (después de reproducir):
 
     <h2>Qué revisará el docente</h2>
     <ul class="tools">
-      <li>Otra persona puede reproducir el bug siguiendo solo sus pasos.</li>
-      <li>Resumen claro, un problema por issue y sin duplicados.</li>
-      <li>Resultado esperado tomado del criterio de aceptación y resultado obtenido concreto.</li>
-      <li>Evidencia adjunta (captura o GIF).</li>
-      <li>Severidad y prioridad propuestas con una justificación breve.</li>
-      <li>Bug enlazado a su historia y con las etiquetas correctas.</li>
-      <li>Depuración: defecto ubicado en el código y corrección propuesta.</li>
+      <li><strong>El plan:</strong> una tarea general y una tarea por historia (20), enlazadas a su historia, con al menos un caso por criterio, datos concretos y resultado esperado.</li>
+      <li><strong>La calidad de los casos:</strong> van más allá del camino feliz (límites, clases de datos, cambios de estado).</li>
+      <li><strong>La ejecución:</strong> resultado (Pasa o Falla) registrado en cada caso y tareas en Done.</li>
+      <li><strong>Cada bug:</strong> reproducible por otra persona, resumen claro, esperado (citando criterio y caso) frente a obtenido, y evidencia adjunta.</li>
+      <li><strong>Severidad y prioridad</strong> propuestas con una justificación breve.</li>
+      <li><strong>Trazabilidad:</strong> bug ↔ tarea ↔ historia, con las etiquetas correctas (equipo, us-xx, sev-n).</li>
+      <li><strong>Depuración:</strong> defecto ubicado en el código y corrección propuesta.</li>
     </ul>
 
     <footer>
       <span>QA Tienda Escolar — sprint de pruebas en Jira</span>
-      <span>Historia → criterio → bug → causa raíz</span>
+      <span>Plan → ejecución → bug → causa raíz</span>
     </footer>
   </div>
 </div>
