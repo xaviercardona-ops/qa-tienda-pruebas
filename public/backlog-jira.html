@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backlog de pruebas — QA Tienda Escolar</title>
+<meta name="description" content="20 historias de usuario con criterios de aceptación para probar la tienda, reportar bugs en Jira y depurarlos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #eae7de;
+    --sheet: #fbfaf5;
+    --ink: #21241f;
+    --ink-soft: #5c6158;
+    --line: #dbd7c9;
+    --accent: #c85a1d;
+    --accent-soft: #f1dcc9;
+    --cat-error: #6b6f63;
+    --cat-error-soft: #e4e4dc;
+    --cat-defecto: #a5761f;
+    --cat-defecto-soft: #f1e2c2;
+    --cat-falla: #a8362a;
+    --cat-falla-soft: #f2d9d4;
+    --ok: #4a7a3f;
+    --shadow: 0 1px 2px rgba(33,36,31,0.06), 0 12px 32px -16px rgba(33,36,31,0.28);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #17181a;
+      --sheet: #232420;
+      --ink: #ede9df;
+      --ink-soft: #a8a99a;
+      --line: #3a3b34;
+      --accent: #e58444;
+      --accent-soft: #3a2a1c;
+      --cat-error: #a3a696;
+      --cat-error-soft: #34352d;
+      --cat-defecto: #d9a648;
+      --cat-defecto-soft: #3a2f18;
+      --cat-falla: #dd7a6c;
+      --cat-falla-soft: #3a211d;
+      --ok: #7fb56f;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #17181a;
+    --sheet: #232420;
+    --ink: #ede9df;
+    --ink-soft: #a8a99a;
+    --line: #3a3b34;
+    --accent: #e58444;
+    --accent-soft: #3a2a1c;
+    --cat-error: #a3a696;
+    --cat-error-soft: #34352d;
+    --cat-defecto: #d9a648;
+    --cat-defecto-soft: #3a2f18;
+    --cat-falla: #dd7a6c;
+    --cat-falla-soft: #3a211d;
+    --ok: #7fb56f;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: clamp(20px, 5vw, 56px) clamp(16px, 4vw, 28px) 64px;
+  }
+
+  .sheet {
+    background: var(--sheet);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    padding: clamp(24px, 5vw, 56px);
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 48px);
+    line-height: 1.02;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 24px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .tag-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 9px 14px;
+    border-radius: 2px;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .tag-link:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .tag-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tag-link .k { color: var(--ink-soft); }
+
+  hr.div {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 36px 0;
+  }
+
+  h2 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+
+  h3 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+
+  .section-note {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    max-width: 64ch;
+    margin: 0 0 20px;
+  }
+
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+  }
+  .pipeline .step {
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 6px 12px;
+    background: var(--paper);
+  }
+  .pipeline .arrow { color: var(--ink-soft); }
+
+  .gherkin-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
+    padding: 6px 0;
+  }
+  .gherkin-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .criterio {
+    border-top: 1px solid var(--line);
+    padding: 12px 0;
+  }
+  .criterio:first-of-type { border-top: none; padding-top: 4px; }
+
+  .example-box {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ok);
+    border-radius: 3px;
+    padding: 18px 20px;
+    background: var(--paper);
+    margin-bottom: 8px;
+  }
+  .example-tag {
+    display: inline-block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ok);
+    margin-bottom: 8px;
+  }
+
+  table.cp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .cp-table th, .cp-table td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .cp-table th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .cp-table code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.92em;
+    background: var(--accent-soft);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+  }
+
+  .story-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .story-card {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 18px;
+    padding: 16px 4px;
+    border-top: 1px solid var(--line);
+  }
+  .story-card:last-child { border-bottom: 1px solid var(--line); }
+  .story-id {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .story-title {
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .story-text {
+    font-size: 16px;
+  }
+
+  .steps-list {
+    margin: 0;
+    padding-left: 22px;
+  }
+  .steps-list li {
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+  .steps-list li::marker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    justify-content: space-between;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 520px) {
+    .story-card { grid-template-columns: 1fr; gap: 4px; }
+    .gherkin-row { grid-template-columns: 1fr; gap: 2px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  .page { max-width: 860px; }
+  .k { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.78em; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .stats { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 18px 0 0; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; color: var(--ink-soft); }
+  .stats b { color: var(--ink); font-weight: 600; }
+  .steps4 { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: st; }
+  .steps4 li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; counter-increment: st; }
+  .steps4 li::before { content: counter(st); font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 22px; color: var(--accent); line-height: 1.3; }
+  .steps4 strong { display: block; font-size: 16px; }
+  .steps4 span { color: var(--ink-soft); font-size: 15px; }
+  pre.template { background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 14px 16px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; margin: 8px 0 10px; }
+  button.copy { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 2px; padding: 7px 12px; cursor: pointer; }
+  button.copy:hover { border-color: var(--accent); }
+  button.copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 6px; }
+  @media (max-width: 680px) { .pair { grid-template-columns: 1fr; } }
+  .ex { border: 1px solid var(--line); border-radius: 3px; padding: 12px 14px; background: var(--paper); font-size: 14.5px; }
+  .ex.bad { border-left: 3px solid var(--cat-falla); }
+  .ex.good { border-left: 3px solid var(--ok); }
+  .ex .tag { display: block; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .ex.bad .tag { color: var(--cat-falla); }
+  .ex.good .tag { color: var(--ok); }
+  .ex p { margin: 0 0 6px; }
+  .ex p:last-child { margin: 0; }
+  table.plain { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .table-wrap { overflow-x: auto; }
+  table.plain th, table.plain td { text-align: left; padding: 9px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+  table.plain thead th { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); border-top: none; border-bottom: 1px solid var(--line); }
+  .sev { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: 13px; white-space: nowrap; }
+  .tools { margin: 0; padding-left: 20px; }
+  .tools li { margin-bottom: 6px; font-size: 15.5px; }
+  .epic-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 30px 0 2px; }
+  .epic-head h2 { margin: 0; }
+  .epic-meta { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-soft); }
+  .story { border-top: 1px solid var(--line); padding: 18px 4px; display: grid; grid-template-columns: 64px 1fr; gap: 16px; scroll-margin-top: 16px; }
+  .story:target { background: var(--paper); }
+  .story h3 { margin: 0 0 4px; font-size: 18px; }
+  .ac-list { list-style: none; margin: 12px 0 0; padding: 0; counter-reset: ac; display: flex; flex-direction: column; gap: 9px; }
+  .ac-list li { counter-increment: ac; display: grid; grid-template-columns: 38px 1fr; gap: 8px; font-size: 15.5px; }
+  .ac-list li::before { content: "CA" counter(ac); font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: var(--ink-soft); padding-top: 3px; }
+  @media (max-width: 520px) { .story { grid-template-columns: 1fr; gap: 4px; } }
+  @media print { .copy { display: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="sheet">
+    <p class="eyebrow">Validación de software · Sprint de pruebas</p>
+    <h1>Backlog de pruebas: 20 historias de usuario</h1>
+    <p class="lede">
+      Este es el backlog del sprint. Prueben la tienda en vivo contra los criterios de aceptación de
+      cada historia, reporten en Jira cada bug que encuentren y después depuren: ubiquen la causa en
+      el código. Es la práctica de lo visto en QA, testing y debugging.
+    </p>
+    <div class="links">
+      <a class="tag-link" href="https://qa-tienda-pruebas.vercel.app" target="_blank" rel="noopener"><span class="k">DEMO</span> qa-tienda-pruebas.vercel.app</a>
+      <a class="tag-link" href="https://github.com/xaviercardona-ops/qa-tienda-pruebas" target="_blank" rel="noopener"><span class="k">REPO</span> para depurar</a>
+      <a class="tag-link" href="#historias"><span class="k">IR A</span> las historias ↓</a>
+    </div>
+    <div class="stats"><span><b>20</b> historias</span><span><b>61</b> criterios de aceptación</span><span><b>6</b> bloques</span></div>
+
+    <hr class="div">
+
+    <h2>Cómo trabajamos</h2>
+    <p class="section-note">Cuatro pasos por cada bloque de historias que les toque.</p>
+    <ol class="steps4">
+      <li><div><strong>Prueben</strong><span>Verifiquen cada criterio de aceptación contra la tienda en vivo y anótenlo como Pasa o Falla (una tabla simple basta: criterio, resultado, bug asociado). Los que pasan también cuentan: no todo es un bug.</span></div></li>
+      <li><div><strong>Reporten</strong><span>Cada criterio que falla es candidato a bug: créenlo en Jira, un problema por issue, enlazado a su historia. Antes de crear uno, busquen si alguien ya lo reportó.</span></div></li>
+      <li><div><strong>Depuren</strong><span>Reproduzcan con los pasos mínimos, aíslen el problema y ubiquen el defecto en el código del repositorio. Agreguen la causa raíz y una corrección propuesta como comentario del bug.</span></div></li>
+      <li><div><strong>Triage</strong><span>El docente revisa los reportes: confirma, marca duplicados, "no es un bug" o "no reproducible", y fija la prioridad. El enlace al proyecto de Jira lo comparte en clase.</span></div></li>
+    </ol>
+    <p class="section-note" style="margin-top:14px"><strong>Tiempo sugerido:</strong> 10 min de arranque · 50 min de prueba y reporte · 25 min de depuración · 15 min de triage y cierre.</p>
+
+    <hr class="div">
+
+    <h2>Cómo reportar un bug en Jira</h2>
+    <p class="section-note">
+      Tipo de issue <strong>Bug</strong>. En el <strong>Resumen</strong> escriban <code>[Módulo] qué falla — cuándo</code>.
+      Peguen la plantilla en la <strong>Descripción</strong>, agreguen la etiqueta de su historia (ej. <code>us-04</code>) y la de
+      severidad (<code>sev-1</code> a <code>sev-4</code>), y enlacen el bug con su historia (vínculo "relates to").
+    </p>
+    <pre class="template" id="plantilla">Historia: US-xx  ·  Criterio: CAx
+Severidad propuesta: S1 / S2 / S3 / S4
+
+Precondiciones:
+-
+
+Pasos para reproducir:
+1.
+2.
+3.
+
+Resultado esperado (según el criterio de aceptación):
+
+Resultado obtenido:
+
+Entorno: navegador y versión · sistema operativo · fecha y hora
+
+Evidencia: captura o GIF adjunto
+
+Depuración (después de reproducir):
+- Falla (lo que se ve):
+- Defecto (archivo y función o línea):
+- Error (qué se pensó mal al programarlo):
+- Corrección propuesta:</pre>
+    <button class="copy" type="button" data-copy="plantilla">Copiar plantilla</button>
+
+    <h3 style="margin-top:22px">Un reporte débil y uno sólido</h3>
+    <p class="section-note" style="margin-bottom:0">Ejemplo ficticio: la tienda no tiene lista de deseos; sirve solo para mostrar la diferencia.</p>
+    <div class="pair">
+      <div class="ex bad">
+        <span class="tag">Débil</span>
+        <p><strong>Resumen:</strong> No funciona la lista</p>
+        <p><strong>Descripción:</strong> Hice clic y no pasó nada. Por favor arreglar.</p>
+      </div>
+      <div class="ex good">
+        <span class="tag">Sólido</span>
+        <p><strong>Resumen:</strong> [Lista de deseos] El botón «Guardar» no responde con la lista vacía</p>
+        <p><strong>Pasos:</strong> 1. Abrir «Mi lista» sin productos. 2. Presionar «Guardar».</p>
+        <p><strong>Esperado (US-xx CA2):</strong> aparece «Lista guardada». <strong>Obtenido:</strong> no ocurre nada ni hay mensaje de error.</p>
+        <p><strong>Entorno:</strong> Chrome 128 · Windows 11 · GIF adjunto. <strong>Severidad propuesta:</strong> S3.</p>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <h2>Severidad y prioridad</h2>
+    <p class="section-note">La <strong>severidad</strong> mide el impacto del bug; la <strong>prioridad</strong> (campo Priority de Jira) mide qué tan pronto conviene corregirlo. Ustedes proponen ambas y justifican en una línea; el docente decide la prioridad final.</p>
+    <div class="table-wrap">
+      <table class="plain">
+        <thead><tr><th>Severidad</th><th>Cuándo aplica</th><th>Prioridad típica</th></tr></thead>
+        <tbody>
+          <tr><td class="sev">S1 · Crítica</td><td>Impide completar la compra, o el sistema cobra o registra montos incorrectos.</td><td>Alta</td></tr>
+          <tr><td class="sev">S2 · Mayor</td><td>Una función principal falla sin bloquear la compra, o hay riesgo para los datos personales.</td><td>Alta o media</td></tr>
+          <tr><td class="sev">S3 · Menor</td><td>Función secundaria, validación incompleta o problema de accesibilidad con alternativa.</td><td>Media o baja</td></tr>
+          <tr><td class="sev">S4 · Trivial</td><td>Detalle cosmético o de comodidad.</td><td>Baja</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="div">
+
+    <h2>Depuración y herramientas</h2>
+    <p class="section-note">
+      Reproducir no es depurar. Formulen una hipótesis, verifíquenla y solo entonces busquen la línea en el
+      repositorio. En el comentario final del bug separen tres cosas, como en la práctica de error, defecto y falla:
+      la <strong>falla</strong> (lo que se ve), el <strong>defecto</strong> (dónde está en el código) y el <strong>error</strong> (qué se pensó mal).
+    </p>
+    <ul class="tools">
+      <li><strong>Consola y Red</strong> de las herramientas del navegador: mensajes, respuestas y errores.</li>
+      <li><strong>Application → Local Storage</strong>: qué guarda la tienda y qué no.</li>
+      <li><strong>Modo responsive</strong> (Ctrl/Cmd + Shift + M): probar en un teléfono de 375 px.</li>
+      <li><strong>Elements → Accessibility</strong> y el selector de color: nombre accesible de un campo y relación de contraste.</li>
+    </ul>
+
+    <hr class="div">
+
+    <h2>Reparto sugerido</h2>
+    <p class="section-note">Un bloque por equipo. Si hay menos equipos, combinen los bloques pequeños (Catálogo con Calidad de uso; Confirmación con Descuentos e impuestos); si hay más, partan Carrito y Checkout.</p>
+    <div class="table-wrap">
+      <table class="plain">
+        <thead><tr><th>Bloque</th><th>Historias</th><th>Criterios</th></tr></thead>
+        <tbody>
+          <tr><td>Catálogo</td><td>US-01 a US-03</td><td>9</td></tr>
+          <tr><td>Carrito</td><td>US-04 a US-08</td><td>14</td></tr>
+          <tr><td>Descuentos e impuestos</td><td>US-09 a US-12</td><td>11</td></tr>
+          <tr><td>Checkout</td><td>US-13 a US-16</td><td>14</td></tr>
+          <tr><td>Confirmación</td><td>US-17 a US-19</td><td>9</td></tr>
+          <tr><td>Calidad de uso</td><td>US-20</td><td>4</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="div" id="historias">
+
+    <h2>Las 20 historias</h2>
+    <p class="section-note">Cada criterio se escribe como <span class="k">Dado</span> (condición inicial), <span class="k">cuando</span> (acción) y <span class="k">entonces</span> (resultado esperado). Un criterio que falla es un bug candidato.</p>
+    <section>
+      <div class="epic-head"><h2>Catálogo</h2><span class="epic-meta">US-01 a US-03 · 9 criterios</span></div>
+      <article class="story" id="us-01">
+        <div class="story-id">US-01</div>
+        <div>
+          <h3>Ver el catálogo de productos</h3>
+          <p class="story-text">Como cliente, quiero ver el catálogo con el nombre, el precio y el stock de cada producto, para decidir qué comprar.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> que abro la tienda, <span class="k">cuando</span> la página termina de cargar, <span class="k">entonces</span> veo 8 productos en el catálogo.</span></li>
+            <li><span><span class="k">Dado</span> un producto del catálogo, <span class="k">cuando</span> lo miro, <span class="k">entonces</span> veo su nombre, su precio unitario y las unidades en stock.</span></li>
+            <li><span><span class="k">Dado</span> cualquier precio del catálogo, <span class="k">cuando</span> lo leo, <span class="k">entonces</span> usa el punto como separador de miles y no muestra decimales (ej. $ 65.000).</span></li>
+            <li><span><span class="k">Dado</span> un teléfono con pantalla de 375 px de ancho, <span class="k">cuando</span> veo el catálogo y el carrito, <span class="k">entonces</span> todo el contenido cabe sin desplazamiento horizontal.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-02">
+        <div class="story-id">US-02</div>
+        <div>
+          <h3>Ver el stock real mientras armo mi pedido</h3>
+          <p class="story-text">Como cliente, quiero que el stock que veo refleje lo que ya puse en mi carrito y lo que ya compré, para no pedir unidades que no existen.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un producto con stock 6, <span class="k">cuando</span> agrego 2 unidades al carrito, <span class="k">entonces</span> el catálogo muestra 4 unidades disponibles.</span></li>
+            <li><span><span class="k">Dado</span> un producto con stock 6, <span class="k">cuando</span> confirmo un pedido de 2 unidades y vuelvo a la tienda, <span class="k">entonces</span> el catálogo muestra 4 unidades disponibles.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-03">
+        <div class="story-id">US-03</div>
+        <div>
+          <h3>Indicar la cantidad antes de agregar</h3>
+          <p class="story-text">Como cliente, quiero escribir cuántas unidades quiero de un producto antes de agregarlo, para no tener que repetir el clic.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un producto con stock suficiente, <span class="k">cuando</span> escribo 3 en la cantidad y presiono "Agregar", <span class="k">entonces</span> el carrito muestra 3 unidades de ese producto.</span></li>
+            <li><span><span class="k">Dado</span> el campo de cantidad, <span class="k">cuando</span> escribo 0, un número negativo o lo dejo vacío, <span class="k">entonces</span> el sistema toma 1 unidad como mínimo.</span></li>
+            <li><span><span class="k">Dado</span> el campo de cantidad, <span class="k">cuando</span> escribo un valor con decimales (ej. 1.5), <span class="k">entonces</span> el sistema no lo acepta: solo se admiten unidades enteras.</span></li>
+          </ol>
+        </div>
+      </article>
+    </section>
+    <section>
+      <div class="epic-head"><h2>Carrito</h2><span class="epic-meta">US-04 a US-08 · 14 criterios</span></div>
+      <article class="story" id="us-04">
+        <div class="story-id">US-04</div>
+        <div>
+          <h3>Agregar productos sin superar el stock</h3>
+          <p class="story-text">Como cliente, quiero que la tienda no me deje pedir más unidades de las que existen, para que mi pedido se pueda cumplir.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un producto con stock 15, <span class="k">cuando</span> agrego 15 unidades, <span class="k">entonces</span> el carrito las acepta.</span></li>
+            <li><span><span class="k">Dado</span> un producto con stock 6, <span class="k">cuando</span> intento agregar 7 unidades de una vez, <span class="k">entonces</span> veo un aviso con el stock disponible y no se agrega nada.</span></li>
+            <li><span><span class="k">Dado</span> un producto que ya está en mi carrito, <span class="k">cuando</span> lo que ya tengo más lo que agrego supera su stock, <span class="k">entonces</span> el sistema no lo permite y me informa el stock disponible.</span></li>
+            <li><span><span class="k">Dado</span> un carrito con varios productos, <span class="k">cuando</span> reviso el encabezado, <span class="k">entonces</span> el contador muestra el total de unidades del carrito (ej. 3 cuadernos y 2 esferos = 5).</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-05">
+        <div class="story-id">US-05</div>
+        <div>
+          <h3>Aumentar la cantidad desde el carrito</h3>
+          <p class="story-text">Como cliente, quiero subir la cantidad de un producto desde el carrito, para ajustar mi pedido sin volver al catálogo.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un producto en el carrito con cantidad menor a su stock, <span class="k">cuando</span> presiono "+", <span class="k">entonces</span> la cantidad sube en 1 y el subtotal se actualiza.</span></li>
+            <li><span><span class="k">Dado</span> un producto en el carrito cuya cantidad ya es igual a su stock, <span class="k">cuando</span> presiono "+", <span class="k">entonces</span> la cantidad no cambia y el sistema me informa que no hay más unidades.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-06">
+        <div class="story-id">US-06</div>
+        <div>
+          <h3>Disminuir la cantidad desde el carrito</h3>
+          <p class="story-text">Como cliente, quiero bajar la cantidad de un producto desde el carrito, para corregir mi pedido sin eliminarlo.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un producto con cantidad 3 en el carrito, <span class="k">cuando</span> presiono "−", <span class="k">entonces</span> la cantidad baja a 2 y el subtotal se actualiza.</span></li>
+            <li><span><span class="k">Dado</span> un producto con cantidad 1 en el carrito, <span class="k">cuando</span> presiono "−", <span class="k">entonces</span> la cantidad nunca queda en 0 ni en negativo (se mantiene en 1 o el producto se elimina).</span></li>
+            <li><span><span class="k">Dado</span> cualquier estado del carrito, <span class="k">cuando</span> reviso el subtotal, el total y el contador del encabezado, <span class="k">entonces</span> nunca muestran valores negativos.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-07">
+        <div class="story-id">US-07</div>
+        <div>
+          <h3>Quitar un producto del carrito</h3>
+          <p class="story-text">Como cliente, quiero eliminar un producto de mi carrito, para corregir mi pedido si cambio de opinión.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un carrito con dos productos, <span class="k">cuando</span> elimino uno con "✕", <span class="k">entonces</span> desaparece de la lista y deja de sumar en el subtotal.</span></li>
+            <li><span><span class="k">Dado</span> un carrito con un solo producto, <span class="k">cuando</span> lo elimino, <span class="k">entonces</span> veo el mensaje "Tu carrito está vacío" y el total es $ 0.</span></li>
+            <li><span><span class="k">Dado</span> un carrito vacío, <span class="k">cuando</span> miro el botón "Ir a pagar", <span class="k">entonces</span> está deshabilitado.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-08">
+        <div class="story-id">US-08</div>
+        <div>
+          <h3>Conservar mi carrito al recargar la página</h3>
+          <p class="story-text">Como cliente, quiero que mi carrito y mi descuento sigan ahí si recargo la página sin querer, para no armarlo de nuevo.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un carrito con productos, <span class="k">cuando</span> recargo la página, <span class="k">entonces</span> mis productos y cantidades siguen en el carrito.</span></li>
+            <li><span><span class="k">Dado</span> que apliqué un código de descuento válido, <span class="k">cuando</span> recargo la página, <span class="k">entonces</span> el descuento sigue aplicado.</span></li>
+          </ol>
+        </div>
+      </article>
+    </section>
+    <section>
+      <div class="epic-head"><h2>Descuentos e impuestos</h2><span class="epic-meta">US-09 a US-12 · 11 criterios</span></div>
+      <article class="story" id="us-09">
+        <div class="story-id">US-09</div>
+        <div>
+          <h3>Aplicar un código de descuento</h3>
+          <p class="story-text">Como cliente, quiero aplicar un código de descuento, para pagar menos si tengo un cupón.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un carrito con productos, <span class="k">cuando</span> aplico el código DESC10, <span class="k">entonces</span> el descuento es el 10% del subtotal.</span></li>
+            <li><span><span class="k">Dado</span> un carrito con productos, <span class="k">cuando</span> aplico el código DESC20, <span class="k">entonces</span> el descuento es el 20% del subtotal.</span></li>
+            <li><span><span class="k">Dado</span> un código válido, <span class="k">cuando</span> lo escribo en minúsculas, con mayúsculas mezcladas o con espacios al inicio o al final, <span class="k">entonces</span> el sistema lo reconoce igual.</span></li>
+            <li><span><span class="k">Dado</span> que escribí un código en el campo, <span class="k">cuando</span> presiono la tecla Enter, <span class="k">entonces</span> se aplica igual que con el botón "Aplicar".</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-10">
+        <div class="story-id">US-10</div>
+        <div>
+          <h3>Recibir aviso si el código no es válido</h3>
+          <p class="story-text">Como cliente, quiero saber cuando un código no sirve, para no quedarme dudando si el descuento se aplicó.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un código que no existe (ej. ABC123), <span class="k">cuando</span> lo aplico, <span class="k">entonces</span> veo el mensaje "Código de descuento no válido" y el total no cambia.</span></li>
+            <li><span><span class="k">Dado</span> que ya tengo un descuento válido aplicado, <span class="k">cuando</span> aplico un código inválido, <span class="k">entonces</span> el descuento válido se mantiene y solo veo el aviso de error.</span></li>
+            <li><span><span class="k">Dado</span> el campo de código vacío, <span class="k">cuando</span> presiono "Aplicar", <span class="k">entonces</span> no se aplica ningún descuento y veo un aviso.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-11">
+        <div class="story-id">US-11</div>
+        <div>
+          <h3>Ver el IVA correcto</h3>
+          <p class="story-text">Como cliente, quiero ver cuánto IVA se suma a mi compra, para saber el impuesto exacto que estoy pagando.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un carrito sin descuento, <span class="k">cuando</span> miro el IVA, <span class="k">entonces</span> es el 19% del subtotal.</span></li>
+            <li><span><span class="k">Dado</span> un carrito con un descuento aplicado, <span class="k">cuando</span> miro el IVA, <span class="k">entonces</span> es el 19% del valor que queda después de restar el descuento (subtotal − descuento).</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-12">
+        <div class="story-id">US-12</div>
+        <div>
+          <h3>Ver el total a pagar correcto</h3>
+          <p class="story-text">Como cliente, quiero ver el total final de mi compra, para saber exactamente cuánto voy a pagar antes de confirmar.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un carrito sin descuento, <span class="k">cuando</span> miro el total, <span class="k">entonces</span> es subtotal + IVA.</span></li>
+            <li><span><span class="k">Dado</span> un carrito con un descuento aplicado, <span class="k">cuando</span> miro el total, <span class="k">entonces</span> es subtotal − descuento + IVA, con el IVA calculado sobre el valor ya descontado.</span></li>
+          </ol>
+        </div>
+      </article>
+    </section>
+    <section>
+      <div class="epic-head"><h2>Checkout</h2><span class="epic-meta">US-13 a US-16 · 14 criterios</span></div>
+      <article class="story" id="us-13">
+        <div class="story-id">US-13</div>
+        <div>
+          <h3>Ir a pagar desde el carrito</h3>
+          <p class="story-text">Como cliente, quiero pasar del carrito al pago sin perder mi pedido, para completar mi compra con calma.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un carrito con productos, <span class="k">cuando</span> presiono "Ir a pagar", <span class="k">entonces</span> veo el formulario de datos de envío y el total a pagar.</span></li>
+            <li><span><span class="k">Dado</span> el formulario de datos de envío, <span class="k">cuando</span> presiono "Volver al carrito", <span class="k">entonces</span> regreso al carrito con mis productos y mi descuento intactos.</span></li>
+            <li><span><span class="k">Dado</span> un carrito cuyo total a pagar es cero o negativo, <span class="k">cuando</span> intento ir a pagar, <span class="k">entonces</span> el sistema no me deja continuar.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-14">
+        <div class="story-id">US-14</div>
+        <div>
+          <h3>Completar mis datos de envío</h3>
+          <p class="story-text">Como cliente, quiero ingresar mi nombre y mi dirección, para que mi pedido llegue a la persona y al lugar correctos.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> el formulario de envío vacío, <span class="k">cuando</span> presiono "Confirmar pedido", <span class="k">entonces</span> veo un mensaje de error por cada campo obligatorio.</span></li>
+            <li><span><span class="k">Dado</span> un nombre o una dirección compuestos solo por espacios, <span class="k">cuando</span> presiono "Confirmar pedido", <span class="k">entonces</span> el campo se rechaza como si estuviera vacío.</span></li>
+            <li><span><span class="k">Dado</span> el campo de nombre, <span class="k">cuando</span> escribo solo números o símbolos (ej. 12345 o @@@), <span class="k">entonces</span> el sistema lo rechaza: el nombre debe contener letras.</span></li>
+            <li><span><span class="k">Dado</span> el campo de dirección, <span class="k">cuando</span> escribo menos de 5 caracteres (ej. a), <span class="k">entonces</span> el sistema lo rechaza.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-15">
+        <div class="story-id">US-15</div>
+        <div>
+          <h3>Ingresar un correo electrónico válido</h3>
+          <p class="story-text">Como cliente, quiero que la tienda acepte mi correo real, para recibir la información de mi pedido.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un correo con formato estándar (ej. juan@correo.com), <span class="k">cuando</span> lo ingreso, <span class="k">entonces</span> el sistema lo acepta.</span></li>
+            <li><span><span class="k">Dado</span> un correo válido con punto, guion o signo + antes de la arroba (ej. nombre.apellido@dominio.com), <span class="k">cuando</span> lo ingreso, <span class="k">entonces</span> el sistema lo acepta.</span></li>
+            <li><span><span class="k">Dado</span> un correo válido con dominio compuesto (ej. nombre@universidad.edu.co), <span class="k">cuando</span> lo ingreso, <span class="k">entonces</span> el sistema lo acepta.</span></li>
+            <li><span><span class="k">Dado</span> un correo sin arroba, sin dominio o con espacios, <span class="k">cuando</span> lo ingreso, <span class="k">entonces</span> el sistema lo rechaza con un mensaje claro.</span></li>
+            <li><span><span class="k">Dado</span> un correo cuya extensión final tiene un solo carácter (ej. ana@gmail.c), <span class="k">cuando</span> lo ingreso, <span class="k">entonces</span> el sistema lo rechaza.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-16">
+        <div class="story-id">US-16</div>
+        <div>
+          <h3>Que mis datos no queden a la vista de otra persona</h3>
+          <p class="story-text">Como cliente que compra desde un computador compartido, quiero que mis datos personales no queden en el formulario después de comprar, para que la siguiente persona no los vea.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> que confirmé un pedido con mis datos, <span class="k">cuando</span> vuelvo a la tienda y voy a pagar otra compra, <span class="k">entonces</span> el formulario de envío aparece vacío.</span></li>
+            <li><span><span class="k">Dado</span> que confirmé un pedido, <span class="k">cuando</span> recargo la página, <span class="k">entonces</span> mis datos personales no quedan guardados en ninguna parte de la tienda.</span></li>
+          </ol>
+        </div>
+      </article>
+    </section>
+    <section>
+      <div class="epic-head"><h2>Confirmación</h2><span class="epic-meta">US-17 a US-19 · 9 criterios</span></div>
+      <article class="story" id="us-17">
+        <div class="story-id">US-17</div>
+        <div>
+          <h3>Confirmar mi pedido</h3>
+          <p class="story-text">Como cliente, quiero recibir un número de pedido único al confirmar, para poder identificar mi compra.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> datos de envío válidos, <span class="k">cuando</span> presiono "Confirmar pedido", <span class="k">entonces</span> veo "¡Pedido confirmado!" con un número de pedido.</span></li>
+            <li><span><span class="k">Dado</span> que ya confirmé un pedido, <span class="k">cuando</span> confirmo otro sin recargar la página, <span class="k">entonces</span> el número de pedido es distinto al anterior.</span></li>
+            <li><span><span class="k">Dado</span> que ya confirmé un pedido y recargué la página, <span class="k">cuando</span> confirmo otro pedido, <span class="k">entonces</span> el número de pedido sigue siendo distinto a todos los anteriores.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-18">
+        <div class="story-id">US-18</div>
+        <div>
+          <h3>Ver el resumen de mi pedido</h3>
+          <p class="story-text">Como cliente, quiero ver un resumen de lo que compré, para tener constancia de mi pedido.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> un pedido confirmado, <span class="k">cuando</span> veo la pantalla de confirmación, <span class="k">entonces</span> aparece cada producto con su cantidad y su valor.</span></li>
+            <li><span><span class="k">Dado</span> un pedido confirmado, <span class="k">cuando</span> reviso subtotal, descuento, IVA y total pagado, <span class="k">entonces</span> coinciden con los que vi en el carrito antes de pagar.</span></li>
+            <li><span><span class="k">Dado</span> una dirección de entrega muy larga (ej. 70 caracteres sin espacios), <span class="k">cuando</span> veo la confirmación del pedido, <span class="k">entonces</span> la dirección se muestra completa sin romper el diseño de la página.</span></li>
+          </ol>
+        </div>
+      </article>
+      <article class="story" id="us-19">
+        <div class="story-id">US-19</div>
+        <div>
+          <h3>Empezar una compra nueva con el carrito limpio</h3>
+          <p class="story-text">Como cliente, quiero que después de comprar el carrito quede vacío, para empezar una compra nueva sin arrastrar la anterior.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> que confirmé un pedido, <span class="k">cuando</span> vuelvo a la tienda, <span class="k">entonces</span> el carrito está vacío y el contador del encabezado marca 0.</span></li>
+            <li><span><span class="k">Dado</span> que confirmé un pedido con un código de descuento, <span class="k">cuando</span> vuelvo a la tienda, <span class="k">entonces</span> el código ya no está aplicado.</span></li>
+            <li><span><span class="k">Dado</span> que confirmé un pedido, <span class="k">cuando</span> recargo la página, <span class="k">entonces</span> el carrito sigue vacío.</span></li>
+          </ol>
+        </div>
+      </article>
+    </section>
+    <section>
+      <div class="epic-head"><h2>Calidad de uso</h2><span class="epic-meta">US-20 · 4 criterios</span></div>
+      <article class="story" id="us-20">
+        <div class="story-id">US-20</div>
+        <div>
+          <h3>Usar la tienda con lector de pantalla</h3>
+          <p class="story-text">Como persona que usa un lector de pantalla, quiero que los campos y botones se anuncien con un nombre claro y se lean bien, para poder comprar sin ayuda.</p>
+          <ol class="ac-list">
+            <li><span><span class="k">Dado</span> el formulario de datos de envío, <span class="k">cuando</span> un lector de pantalla recorre sus campos, <span class="k">entonces</span> cada campo se anuncia con su etiqueta (Nombre completo, Correo electrónico, Dirección de entrega).</span></li>
+            <li><span><span class="k">Dado</span> el campo de cantidad de cada producto del catálogo, <span class="k">cuando</span> un lector de pantalla lo recorre, <span class="k">entonces</span> anuncia a qué producto pertenece.</span></li>
+            <li><span><span class="k">Dado</span> el botón para quitar un producto del carrito, <span class="k">cuando</span> lo miro sobre el fondo blanco, <span class="k">entonces</span> su contraste con el fondo es de al menos 3:1.</span></li>
+            <li><span><span class="k">Dado</span> el texto secundario de la tienda (stock, precio unitario en el carrito), <span class="k">cuando</span> lo miro sobre el fondo blanco, <span class="k">entonces</span> su contraste con el fondo es de al menos 4.5:1.</span></li>
+          </ol>
+        </div>
+      </article>
+    </section>
+
+    <hr class="div">
+
+    <h2>Qué revisará el docente</h2>
+    <ul class="tools">
+      <li>Otra persona puede reproducir el bug siguiendo solo sus pasos.</li>
+      <li>Resumen claro, un problema por issue y sin duplicados.</li>
+      <li>Resultado esperado tomado del criterio de aceptación y resultado obtenido concreto.</li>
+      <li>Evidencia adjunta (captura o GIF).</li>
+      <li>Severidad y prioridad propuestas con una justificación breve.</li>
+      <li>Bug enlazado a su historia y con las etiquetas correctas.</li>
+      <li>Depuración: defecto ubicado en el código y corrección propuesta.</li>
+    </ul>
+
+    <footer>
+      <span>QA Tienda Escolar — sprint de pruebas en Jira</span>
+      <span>Historia → criterio → bug → causa raíz</span>
+    </footer>
+  </div>
+</div>
+<script>
+document.querySelectorAll("[data-copy]").forEach(function (btn) {
+  btn.addEventListener("click", async function () {
+    var target = document.getElementById(btn.dataset.copy);
+    try {
+      await navigator.clipboard.writeText(target.innerText);
+      btn.textContent = "Copiada";
+    } catch (e) {
+      var r = document.createRange(); r.selectNodeContents(target);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = "Seleccionada: copien con Ctrl/Cmd + C";
+    }
+    setTimeout(function () { btn.textContent = "Copiar plantilla"; }, 2500);
+  });
+});
+</script>
+</body>
+</html>

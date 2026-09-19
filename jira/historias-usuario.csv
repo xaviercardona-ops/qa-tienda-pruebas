@@ -1,0 +1,122 @@
+"Summary","Issue Type","Description","Priority","Labels"
+"US-01 · Ver el catálogo de productos","Story","Como cliente, quiero ver el catálogo con el nombre, el precio y el stock de cada producto, para decidir qué comprar.
+
+Criterios de aceptación:
+CA1: Dado que abro la tienda, cuando la página termina de cargar, entonces veo 8 productos en el catálogo.
+CA2: Dado un producto del catálogo, cuando lo miro, entonces veo su nombre, su precio unitario y las unidades en stock.
+CA3: Dado cualquier precio del catálogo, cuando lo leo, entonces usa el punto como separador de miles y no muestra decimales (ej. $ 65.000).
+CA4: Dado un teléfono con pantalla de 375 px de ancho, cuando veo el catálogo y el carrito, entonces todo el contenido cabe sin desplazamiento horizontal.","Medium","catalogo"
+"US-02 · Ver el stock real mientras armo mi pedido","Story","Como cliente, quiero que el stock que veo refleje lo que ya puse en mi carrito y lo que ya compré, para no pedir unidades que no existen.
+
+Criterios de aceptación:
+CA1: Dado un producto con stock 6, cuando agrego 2 unidades al carrito, entonces el catálogo muestra 4 unidades disponibles.
+CA2: Dado un producto con stock 6, cuando confirmo un pedido de 2 unidades y vuelvo a la tienda, entonces el catálogo muestra 4 unidades disponibles.","Medium","catalogo"
+"US-03 · Indicar la cantidad antes de agregar","Story","Como cliente, quiero escribir cuántas unidades quiero de un producto antes de agregarlo, para no tener que repetir el clic.
+
+Criterios de aceptación:
+CA1: Dado un producto con stock suficiente, cuando escribo 3 en la cantidad y presiono ""Agregar"", entonces el carrito muestra 3 unidades de ese producto.
+CA2: Dado el campo de cantidad, cuando escribo 0, un número negativo o lo dejo vacío, entonces el sistema toma 1 unidad como mínimo.
+CA3: Dado el campo de cantidad, cuando escribo un valor con decimales (ej. 1.5), entonces el sistema no lo acepta: solo se admiten unidades enteras.","Low","catalogo"
+"US-04 · Agregar productos sin superar el stock","Story","Como cliente, quiero que la tienda no me deje pedir más unidades de las que existen, para que mi pedido se pueda cumplir.
+
+Criterios de aceptación:
+CA1: Dado un producto con stock 15, cuando agrego 15 unidades, entonces el carrito las acepta.
+CA2: Dado un producto con stock 6, cuando intento agregar 7 unidades de una vez, entonces veo un aviso con el stock disponible y no se agrega nada.
+CA3: Dado un producto que ya está en mi carrito, cuando lo que ya tengo más lo que agrego supera su stock, entonces el sistema no lo permite y me informa el stock disponible.
+CA4: Dado un carrito con varios productos, cuando reviso el encabezado, entonces el contador muestra el total de unidades del carrito (ej. 3 cuadernos y 2 esferos = 5).","High","carrito"
+"US-05 · Aumentar la cantidad desde el carrito","Story","Como cliente, quiero subir la cantidad de un producto desde el carrito, para ajustar mi pedido sin volver al catálogo.
+
+Criterios de aceptación:
+CA1: Dado un producto en el carrito con cantidad menor a su stock, cuando presiono ""+"", entonces la cantidad sube en 1 y el subtotal se actualiza.
+CA2: Dado un producto en el carrito cuya cantidad ya es igual a su stock, cuando presiono ""+"", entonces la cantidad no cambia y el sistema me informa que no hay más unidades.","Medium","carrito"
+"US-06 · Disminuir la cantidad desde el carrito","Story","Como cliente, quiero bajar la cantidad de un producto desde el carrito, para corregir mi pedido sin eliminarlo.
+
+Criterios de aceptación:
+CA1: Dado un producto con cantidad 3 en el carrito, cuando presiono ""−"", entonces la cantidad baja a 2 y el subtotal se actualiza.
+CA2: Dado un producto con cantidad 1 en el carrito, cuando presiono ""−"", entonces la cantidad nunca queda en 0 ni en negativo (se mantiene en 1 o el producto se elimina).
+CA3: Dado cualquier estado del carrito, cuando reviso el subtotal, el total y el contador del encabezado, entonces nunca muestran valores negativos.","Medium","carrito"
+"US-07 · Quitar un producto del carrito","Story","Como cliente, quiero eliminar un producto de mi carrito, para corregir mi pedido si cambio de opinión.
+
+Criterios de aceptación:
+CA1: Dado un carrito con dos productos, cuando elimino uno con ""✕"", entonces desaparece de la lista y deja de sumar en el subtotal.
+CA2: Dado un carrito con un solo producto, cuando lo elimino, entonces veo el mensaje ""Tu carrito está vacío"" y el total es $ 0.
+CA3: Dado un carrito vacío, cuando miro el botón ""Ir a pagar"", entonces está deshabilitado.","Medium","carrito"
+"US-08 · Conservar mi carrito al recargar la página","Story","Como cliente, quiero que mi carrito y mi descuento sigan ahí si recargo la página sin querer, para no armarlo de nuevo.
+
+Criterios de aceptación:
+CA1: Dado un carrito con productos, cuando recargo la página, entonces mis productos y cantidades siguen en el carrito.
+CA2: Dado que apliqué un código de descuento válido, cuando recargo la página, entonces el descuento sigue aplicado.","Low","carrito"
+"US-09 · Aplicar un código de descuento","Story","Como cliente, quiero aplicar un código de descuento, para pagar menos si tengo un cupón.
+
+Criterios de aceptación:
+CA1: Dado un carrito con productos, cuando aplico el código DESC10, entonces el descuento es el 10% del subtotal.
+CA2: Dado un carrito con productos, cuando aplico el código DESC20, entonces el descuento es el 20% del subtotal.
+CA3: Dado un código válido, cuando lo escribo en minúsculas, con mayúsculas mezcladas o con espacios al inicio o al final, entonces el sistema lo reconoce igual.
+CA4: Dado que escribí un código en el campo, cuando presiono la tecla Enter, entonces se aplica igual que con el botón ""Aplicar"".","Medium","descuentos"
+"US-10 · Recibir aviso si el código no es válido","Story","Como cliente, quiero saber cuando un código no sirve, para no quedarme dudando si el descuento se aplicó.
+
+Criterios de aceptación:
+CA1: Dado un código que no existe (ej. ABC123), cuando lo aplico, entonces veo el mensaje ""Código de descuento no válido"" y el total no cambia.
+CA2: Dado que ya tengo un descuento válido aplicado, cuando aplico un código inválido, entonces el descuento válido se mantiene y solo veo el aviso de error.
+CA3: Dado el campo de código vacío, cuando presiono ""Aplicar"", entonces no se aplica ningún descuento y veo un aviso.","Low","descuentos"
+"US-11 · Ver el IVA correcto","Story","Como cliente, quiero ver cuánto IVA se suma a mi compra, para saber el impuesto exacto que estoy pagando.
+
+Criterios de aceptación:
+CA1: Dado un carrito sin descuento, cuando miro el IVA, entonces es el 19% del subtotal.
+CA2: Dado un carrito con un descuento aplicado, cuando miro el IVA, entonces es el 19% del valor que queda después de restar el descuento (subtotal − descuento).","High","descuentos"
+"US-12 · Ver el total a pagar correcto","Story","Como cliente, quiero ver el total final de mi compra, para saber exactamente cuánto voy a pagar antes de confirmar.
+
+Criterios de aceptación:
+CA1: Dado un carrito sin descuento, cuando miro el total, entonces es subtotal + IVA.
+CA2: Dado un carrito con un descuento aplicado, cuando miro el total, entonces es subtotal − descuento + IVA, con el IVA calculado sobre el valor ya descontado.","High","descuentos"
+"US-13 · Ir a pagar desde el carrito","Story","Como cliente, quiero pasar del carrito al pago sin perder mi pedido, para completar mi compra con calma.
+
+Criterios de aceptación:
+CA1: Dado un carrito con productos, cuando presiono ""Ir a pagar"", entonces veo el formulario de datos de envío y el total a pagar.
+CA2: Dado el formulario de datos de envío, cuando presiono ""Volver al carrito"", entonces regreso al carrito con mis productos y mi descuento intactos.
+CA3: Dado un carrito cuyo total a pagar es cero o negativo, cuando intento ir a pagar, entonces el sistema no me deja continuar.","High","checkout"
+"US-14 · Completar mis datos de envío","Story","Como cliente, quiero ingresar mi nombre y mi dirección, para que mi pedido llegue a la persona y al lugar correctos.
+
+Criterios de aceptación:
+CA1: Dado el formulario de envío vacío, cuando presiono ""Confirmar pedido"", entonces veo un mensaje de error por cada campo obligatorio.
+CA2: Dado un nombre o una dirección compuestos solo por espacios, cuando presiono ""Confirmar pedido"", entonces el campo se rechaza como si estuviera vacío.
+CA3: Dado el campo de nombre, cuando escribo solo números o símbolos (ej. 12345 o @@@), entonces el sistema lo rechaza: el nombre debe contener letras.
+CA4: Dado el campo de dirección, cuando escribo menos de 5 caracteres (ej. a), entonces el sistema lo rechaza.","Medium","checkout"
+"US-15 · Ingresar un correo electrónico válido","Story","Como cliente, quiero que la tienda acepte mi correo real, para recibir la información de mi pedido.
+
+Criterios de aceptación:
+CA1: Dado un correo con formato estándar (ej. juan@correo.com), cuando lo ingreso, entonces el sistema lo acepta.
+CA2: Dado un correo válido con punto, guion o signo + antes de la arroba (ej. nombre.apellido@dominio.com), cuando lo ingreso, entonces el sistema lo acepta.
+CA3: Dado un correo válido con dominio compuesto (ej. nombre@universidad.edu.co), cuando lo ingreso, entonces el sistema lo acepta.
+CA4: Dado un correo sin arroba, sin dominio o con espacios, cuando lo ingreso, entonces el sistema lo rechaza con un mensaje claro.
+CA5: Dado un correo cuya extensión final tiene un solo carácter (ej. ana@gmail.c), cuando lo ingreso, entonces el sistema lo rechaza.","High","checkout"
+"US-16 · Que mis datos no queden a la vista de otra persona","Story","Como cliente que compra desde un computador compartido, quiero que mis datos personales no queden en el formulario después de comprar, para que la siguiente persona no los vea.
+
+Criterios de aceptación:
+CA1: Dado que confirmé un pedido con mis datos, cuando vuelvo a la tienda y voy a pagar otra compra, entonces el formulario de envío aparece vacío.
+CA2: Dado que confirmé un pedido, cuando recargo la página, entonces mis datos personales no quedan guardados en ninguna parte de la tienda.","Medium","checkout"
+"US-17 · Confirmar mi pedido","Story","Como cliente, quiero recibir un número de pedido único al confirmar, para poder identificar mi compra.
+
+Criterios de aceptación:
+CA1: Dado datos de envío válidos, cuando presiono ""Confirmar pedido"", entonces veo ""¡Pedido confirmado!"" con un número de pedido.
+CA2: Dado que ya confirmé un pedido, cuando confirmo otro sin recargar la página, entonces el número de pedido es distinto al anterior.
+CA3: Dado que ya confirmé un pedido y recargué la página, cuando confirmo otro pedido, entonces el número de pedido sigue siendo distinto a todos los anteriores.","High","confirmacion"
+"US-18 · Ver el resumen de mi pedido","Story","Como cliente, quiero ver un resumen de lo que compré, para tener constancia de mi pedido.
+
+Criterios de aceptación:
+CA1: Dado un pedido confirmado, cuando veo la pantalla de confirmación, entonces aparece cada producto con su cantidad y su valor.
+CA2: Dado un pedido confirmado, cuando reviso subtotal, descuento, IVA y total pagado, entonces coinciden con los que vi en el carrito antes de pagar.
+CA3: Dado una dirección de entrega muy larga (ej. 70 caracteres sin espacios), cuando veo la confirmación del pedido, entonces la dirección se muestra completa sin romper el diseño de la página.","Medium","confirmacion"
+"US-19 · Empezar una compra nueva con el carrito limpio","Story","Como cliente, quiero que después de comprar el carrito quede vacío, para empezar una compra nueva sin arrastrar la anterior.
+
+Criterios de aceptación:
+CA1: Dado que confirmé un pedido, cuando vuelvo a la tienda, entonces el carrito está vacío y el contador del encabezado marca 0.
+CA2: Dado que confirmé un pedido con un código de descuento, cuando vuelvo a la tienda, entonces el código ya no está aplicado.
+CA3: Dado que confirmé un pedido, cuando recargo la página, entonces el carrito sigue vacío.","Low","confirmacion"
+"US-20 · Usar la tienda con lector de pantalla","Story","Como persona que usa un lector de pantalla, quiero que los campos y botones se anuncien con un nombre claro y se lean bien, para poder comprar sin ayuda.
+
+Criterios de aceptación:
+CA1: Dado el formulario de datos de envío, cuando un lector de pantalla recorre sus campos, entonces cada campo se anuncia con su etiqueta (Nombre completo, Correo electrónico, Dirección de entrega).
+CA2: Dado el campo de cantidad de cada producto del catálogo, cuando un lector de pantalla lo recorre, entonces anuncia a qué producto pertenece.
+CA3: Dado el botón para quitar un producto del carrito, cuando lo miro sobre el fondo blanco, entonces su contraste con el fondo es de al menos 3:1.
+CA4: Dado el texto secundario de la tienda (stock, precio unitario en el carrito), cuando lo miro sobre el fondo blanco, entonces su contraste con el fondo es de al menos 4.5:1.","Medium","calidad-de-uso"
