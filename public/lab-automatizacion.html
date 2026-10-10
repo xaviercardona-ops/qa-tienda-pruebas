@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorio de automatización — QA Tienda Escolar</title>
+<meta name="description" content="Laboratorio 3.1: los estudiantes convierten sus casos de prueba manuales en pruebas automatizadas con Playwright sobre la tienda, cazan bugs y los documentan en Jira.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #eae7de;
+    --sheet: #fbfaf5;
+    --ink: #21241f;
+    --ink-soft: #5c6158;
+    --line: #dbd7c9;
+    --accent: #c85a1d;
+    --accent-soft: #f1dcc9;
+    --cat-error: #6b6f63;
+    --cat-error-soft: #e4e4dc;
+    --cat-defecto: #a5761f;
+    --cat-defecto-soft: #f1e2c2;
+    --cat-falla: #a8362a;
+    --cat-falla-soft: #f2d9d4;
+    --ok: #4a7a3f;
+    --shadow: 0 1px 2px rgba(33,36,31,0.06), 0 12px 32px -16px rgba(33,36,31,0.28);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #17181a;
+      --sheet: #232420;
+      --ink: #ede9df;
+      --ink-soft: #a8a99a;
+      --line: #3a3b34;
+      --accent: #e58444;
+      --accent-soft: #3a2a1c;
+      --cat-error: #a3a696;
+      --cat-error-soft: #34352d;
+      --cat-defecto: #d9a648;
+      --cat-defecto-soft: #3a2f18;
+      --cat-falla: #dd7a6c;
+      --cat-falla-soft: #3a211d;
+      --ok: #7fb56f;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #17181a;
+    --sheet: #232420;
+    --ink: #ede9df;
+    --ink-soft: #a8a99a;
+    --line: #3a3b34;
+    --accent: #e58444;
+    --accent-soft: #3a2a1c;
+    --cat-error: #a3a696;
+    --cat-error-soft: #34352d;
+    --cat-defecto: #d9a648;
+    --cat-defecto-soft: #3a2f18;
+    --cat-falla: #dd7a6c;
+    --cat-falla-soft: #3a211d;
+    --ok: #7fb56f;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: clamp(20px, 5vw, 56px) clamp(16px, 4vw, 28px) 64px;
+  }
+
+  .sheet {
+    background: var(--sheet);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    padding: clamp(24px, 5vw, 56px);
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 48px);
+    line-height: 1.02;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 24px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .tag-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 9px 14px;
+    border-radius: 2px;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .tag-link:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .tag-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tag-link .k { color: var(--ink-soft); }
+
+  hr.div {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 36px 0;
+  }
+
+  h2 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+
+  h3 {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+
+  .section-note {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    max-width: 64ch;
+    margin: 0 0 20px;
+  }
+
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+  }
+  .pipeline .step {
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 6px 12px;
+    background: var(--paper);
+  }
+  .pipeline .arrow { color: var(--ink-soft); }
+
+  .gherkin-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
+    padding: 6px 0;
+  }
+  .gherkin-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .criterio {
+    border-top: 1px solid var(--line);
+    padding: 12px 0;
+  }
+  .criterio:first-of-type { border-top: none; padding-top: 4px; }
+
+  .example-box {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ok);
+    border-radius: 3px;
+    padding: 18px 20px;
+    background: var(--paper);
+    margin-bottom: 8px;
+  }
+  .example-tag {
+    display: inline-block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ok);
+    margin-bottom: 8px;
+  }
+
+  table.cp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .cp-table th, .cp-table td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .cp-table th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .cp-table code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.92em;
+    background: var(--accent-soft);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+  }
+
+  .story-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .story-card {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 18px;
+    padding: 16px 4px;
+    border-top: 1px solid var(--line);
+  }
+  .story-card:last-child { border-bottom: 1px solid var(--line); }
+  .story-id {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .story-title {
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .story-text {
+    font-size: 16px;
+  }
+
+  .steps-list {
+    margin: 0;
+    padding-left: 22px;
+  }
+  .steps-list li {
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+  .steps-list li::marker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    justify-content: space-between;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 520px) {
+    .story-card { grid-template-columns: 1fr; gap: 4px; }
+    .gherkin-row { grid-template-columns: 1fr; gap: 2px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  .page { max-width: 860px; }
+  .k { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.78em; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .stats { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 18px 0 0; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; color: var(--ink-soft); }
+  .stats b { color: var(--ink); font-weight: 600; }
+  .steps4 { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: st; }
+  .steps4 li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; counter-increment: st; }
+  .steps4 li::before { content: counter(st); font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 22px; color: var(--accent); line-height: 1.3; }
+  .steps4 strong { display: block; font-size: 16px; }
+  .steps4 span { color: var(--ink-soft); font-size: 15px; }
+  pre.template { background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 14px 16px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; margin: 8px 0 10px; }
+  button.copy { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 2px; padding: 7px 12px; cursor: pointer; }
+  button.copy:hover { border-color: var(--accent); }
+  button.copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 6px; }
+  @media (max-width: 680px) { .pair { grid-template-columns: 1fr; } }
+  .stack { display: flex; flex-direction: column; gap: 12px; margin: 14px 0 6px; }
+  .ex { border: 1px solid var(--line); border-radius: 3px; padding: 12px 14px; background: var(--paper); font-size: 14.5px; }
+  .ex.bad { border-left: 3px solid var(--cat-falla); }
+  .ex.good { border-left: 3px solid var(--ok); }
+  .ex.plan { border-left: 3px solid var(--accent); }
+  .ex .tag { display: block; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .ex.bad .tag { color: var(--cat-falla); }
+  .ex.good .tag { color: var(--ok); }
+  .ex.plan .tag { color: var(--accent); }
+  .ex p { margin: 0 0 6px; }
+  .ex p:last-child { margin: 0; }
+  .ex .cp { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.5; margin: 0 0 8px; }
+  table.plain { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .table-wrap { overflow-x: auto; }
+  table.plain th, table.plain td { text-align: left; padding: 9px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+  table.plain thead th { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); border-top: none; border-bottom: 1px solid var(--line); }
+  table.plain code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.86em; background: var(--accent-soft); padding: 0.1em 0.4em; border-radius: 2px; }
+  .sev { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: 13px; white-space: nowrap; }
+  .tools { margin: 0; padding-left: 20px; }
+  .tools li { margin-bottom: 6px; font-size: 15.5px; }
+  .section-note code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.86em; background: var(--accent-soft); padding: 0.1em 0.4em; border-radius: 2px; }
+  .epic-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 30px 0 2px; }
+  .epic-head h2 { margin: 0; }
+  .epic-meta { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-soft); }
+  .story { border-top: 1px solid var(--line); padding: 18px 4px; display: grid; grid-template-columns: 64px 1fr; gap: 16px; scroll-margin-top: 16px; }
+  .story:target { background: var(--paper); }
+  .story h3 { margin: 0 0 4px; font-size: 18px; }
+  .ac-list { list-style: none; margin: 12px 0 0; padding: 0; counter-reset: ac; display: flex; flex-direction: column; gap: 9px; }
+  .ac-list li { counter-increment: ac; display: grid; grid-template-columns: 38px 1fr; gap: 8px; font-size: 15.5px; }
+  .ac-list li::before { content: "CA" counter(ac); font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: var(--ink-soft); padding-top: 3px; }
+  @media (max-width: 520px) { .story { grid-template-columns: 1fr; gap: 4px; } }
+  @media print { .copy { display: none; } }
+
+  .page { max-width: 880px; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+  .toc a { display: inline-block; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; text-decoration: none; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 2px; padding: 5px 10px; }
+  .toc a:hover { border-color: var(--accent); }
+  .toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .part-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 4px; }
+  .part-head h2 { margin: 0; }
+  .chip { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11.5px; letter-spacing: 0.04em; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+  .chip.bonus { color: var(--accent); border-color: var(--accent); }
+  h3 { margin-top: 22px; }
+  p { margin: 0 0 12px; }
+  .section-note { max-width: 72ch; }
+  ol.pasos, ul.lista { margin: 0 0 14px; padding-left: 22px; }
+  ol.pasos li, ul.lista li { margin-bottom: 8px; font-size: 16px; }
+  ol.pasos li::marker { font-family: "IBM Plex Mono", ui-monospace, monospace; color: var(--accent); font-size: 14px; }
+  ul.check { list-style: none; margin: 0 0 14px; padding: 0; }
+  ul.check li { display: grid; grid-template-columns: 24px 1fr; gap: 6px; margin-bottom: 7px; font-size: 16px; }
+  ul.check li::before { content: "☐"; color: var(--accent); font-size: 17px; line-height: 1.35; }
+  code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.86em; background: var(--accent-soft); color: var(--ink); padding: 0.1em 0.4em; border-radius: 2px; }
+  pre.code { position: relative; background: var(--ink); color: var(--sheet); border-radius: 3px; padding: 14px 16px; overflow-x: auto; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.55; margin: 8px 0 14px; }
+  pre.code code { background: none; color: inherit; padding: 0; font-size: inherit; }
+  pre.code .c { opacity: 0.62; }
+  pre.code button.copy { position: absolute; top: 8px; right: 8px; font-size: 11px; padding: 4px 9px; background: var(--sheet); color: var(--ink); opacity: 0.0; transition: opacity 120ms ease; }
+  pre.code:hover button.copy, pre.code button.copy:focus-visible { opacity: 1; }
+  @media (hover: none) { pre.code button.copy { opacity: 1; } }
+  .callout { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 3px; background: var(--paper); padding: 12px 16px; margin: 14px 0; font-size: 15.5px; }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout .label { display: block; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+  .callout.warn { border-left-color: var(--cat-falla); }
+  .callout.warn .label { color: var(--cat-falla); }
+  .callout.ok { border-left-color: var(--ok); }
+  .callout.ok .label { color: var(--ok); }
+  figure { margin: 14px 0; }
+  figure img { display: block; max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 3px; }
+  figcaption { font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; }
+  table.plain td:first-child { white-space: nowrap; }
+  table.plain.wrap td:first-child { white-space: normal; }
+  dl.vocab { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0; font-size: 15.5px; }
+  dl.vocab dt { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; color: var(--accent); font-weight: 600; padding-top: 2px; }
+  dl.vocab dd { margin: 0; }
+  @media (max-width: 560px) { dl.vocab { grid-template-columns: 1fr; gap: 2px; } dl.vocab dd { margin-bottom: 8px; } }
+  details { border: 1px solid var(--line); border-radius: 3px; padding: 10px 14px; margin: 10px 0; background: var(--paper); }
+  details summary { cursor: pointer; font-weight: 600; font-size: 15.5px; }
+  details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  details[open] summary { margin-bottom: 8px; }
+  @media print { pre.code button.copy { display: none; } details { display: block; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="sheet">
+    <p class="eyebrow">Verificación y validación de software · Tema 3.1</p>
+    <h1>Laboratorio: mi primera suite automatizada</h1>
+    <p class="lede">
+      Ya escribieron casos de prueba a mano y reportaron bugs en Jira. Hoy los convierten en código: pruebas que se
+      ejecutan solas contra la tienda en vivo, encuentran los bugs en segundos y se repiten mil veces sin cansarse.
+      Trabajan en equipo, con Playwright y TypeScript, sobre la misma tienda de las prácticas anteriores.
+    </p>
+    <div class="links">
+      <a class="tag-link" href="https://github.com/xaviercardona-ops/qa-automatizacion-lab/generate" target="_blank" rel="noopener"><span class="k">PLANTILLA</span> crear el repo del equipo</a>
+      <a class="tag-link" href="https://qa-tienda-pruebas.vercel.app" target="_blank" rel="noopener"><span class="k">TIENDA</span> qa-tienda-pruebas.vercel.app</a>
+      <a class="tag-link" href="https://qa-tienda-pruebas.vercel.app/backlog-jira.html" target="_blank" rel="noopener"><span class="k">BACKLOG</span> 20 historias</a>
+      <a class="tag-link" href="https://playwright.dev/docs/intro" target="_blank" rel="noopener"><span class="k">DOCS</span> playwright.dev</a>
+    </div>
+    <div class="stats"><span><b>7</b> partes</span><span><b>≈ 2 h 20 min</b> con la entrega</span><span><b>1</b> repositorio por equipo</span><span>Playwright + TypeScript</span></div>
+    <ul class="toc">
+      <li><a href="#objetivos">Objetivos</a></li>
+      <li><a href="#antes">Antes de la clase</a></li>
+      <li><a href="#ruta">Ruta y tiempos</a></li>
+      <li><a href="#mapa">Mapa de la tienda</a></li>
+      <li><a href="#p0">0 · Preparación</a></li>
+      <li><a href="#p1">1 · Pasar y fallar</a></li>
+      <li><a href="#p2">2 · Carrito</a></li>
+      <li><a href="#p3">3 · Cazar bugs</a></li>
+      <li><a href="#p4">4 · Datos y heredadas</a></li>
+      <li><a href="#p5">5 · Page Object</a></li>
+      <li><a href="#p6">6 · Reporte y CI</a></li>
+      <li><a href="#entrega">Entrega y rúbrica</a></li>
+      <li><a href="#problemas">Problemas frecuentes</a></li>
+    </ul>
+
+    <hr class="div">
+
+    <h2 id="objetivos">Qué van a lograr</h2>
+    <ul class="lista">
+      <li>Convertir un criterio de aceptación en una prueba automatizada con la forma <strong>Arrange · Act · Assert</strong> (Dado · Cuando · Entonces).</li>
+      <li>Escribir localizadores y aserciones que <strong>esperan solos</strong>, sin pausas fijas, y pruebas independientes entre sí.</li>
+      <li>Distinguir una prueba roja causada por un <strong>bug del producto</strong>, por un <strong>defecto de la prueba</strong>, por <strong>inestabilidad</strong> o por el <strong>entorno</strong>.</li>
+      <li>Documentar un bug conocido en el código y conectarlo con su issue en Jira.</li>
+      <li>Reducir duplicación con un <strong>Page Object</strong> y ejecutar la suite en <strong>integración continua</strong> (GitHub Actions).</li>
+    </ul>
+    <div class="callout warn"><span class="label">Reglas del laboratorio</span>
+      <p><strong>La tienda no se modifica:</strong> es el sistema bajo prueba. <strong>Cada prueba es independiente:</strong> no puede depender de que otra haya corrido antes (cada una arranca con un navegador limpio). <strong>Un rojo no siempre es un bug:</strong> primero se diagnostica, después se reporta.</p>
+    </div>
+    <p class="section-note">¿Su curso usa Selenium, Cypress, Java o Python? Los conceptos de hoy son los mismos en todas las herramientas. Aquí usamos Playwright con TypeScript porque espera solo a que la página esté lista y trae buenas herramientas de diagnóstico (reporte, capturas y <em>trace</em>).</p>
+
+    <hr class="div">
+
+    <h2 id="antes">Antes de la clase</h2>
+    <p class="section-note">Háganlo con calma el día anterior: no descarguen un navegador entre 30 compañeros a la vez con el wifi de la sala.</p>
+    <ul class="check">
+      <li><span><strong>Node.js 20 o superior.</strong> Comprueben con <code>node -v</code>. Si no lo tienen, instalen la versión LTS desde nodejs.org.</span></li>
+      <li><span><strong>Git.</strong> Comprueben con <code>git --version</code>.</span></li>
+      <li><span><strong>Visual Studio Code</strong> (recomendado). Opcional: la extensión <em>Playwright Test for VSCode</em>, que permite ejecutar una prueba con un clic.</span></li>
+      <li><span><strong>Una cuenta de GitHub por integrante.</strong> Una persona del equipo crea el repositorio y agrega al resto como colaboradores.</span></li>
+      <li><span><strong>Su plan de pruebas en Jira a la mano</strong> (las tareas "Plan de pruebas · US-xx" y los bugs que reportaron): lo van a consultar y a actualizar.</span></li>
+      <li><span><strong>≈ 600 MB libres.</strong> Se descarga un navegador de pruebas.</span></li>
+    </ul>
+
+    <hr class="div">
+
+    <h2 id="ruta">Ruta y tiempos</h2>
+    <div class="table-wrap">
+      <table class="plain wrap">
+        <thead><tr><th>Parte</th><th>Qué hacen</th><th>Tiempo</th><th>Terminan con…</th></tr></thead>
+        <tbody>
+          <tr><td>0 · Preparación</td><td>Crean el repo del equipo, instalan y ejecutan la prueba de humo</td><td>15 min</td><td><code>1 passed</code></td></tr>
+          <tr><td>1 · Ver pasar y ver fallar</td><td>Leen un ejemplo resuelto, lo rompen a propósito y leen el error y el reporte</td><td>10 min</td><td>Respuestas a 3 preguntas</td></tr>
+          <tr><td>2 · Automatizar el carrito</td><td>Escriben 3 pruebas nuevas a partir de criterios de aceptación</td><td>25 min</td><td>3 pruebas en verde</td></tr>
+          <tr><td>3 · Cazar bugs con pruebas</td><td>Escriben 4 o más pruebas que destapan bugs y diagnostican cada rojo</td><td>30 min</td><td>Bugs documentados en el código y en Jira</td></tr>
+          <tr><td>4 · Datos y pruebas heredadas</td><td>Una prueba dirigida por datos y el diagnóstico de 3 pruebas en cuarentena</td><td>20 min</td><td>3 veredictos con evidencia</td></tr>
+          <tr><td>5 · Page Object</td><td>Mueven los localizadores a una clase y migran 3 pruebas</td><td>15 min</td><td>Menos código repetido</td></tr>
+          <tr><td>6 · Reporte y CI</td><td>Suben el trabajo y la suite corre sola en GitHub</td><td>15 min</td><td>Actions en verde</td></tr>
+          <tr><td>Entrega</td><td>Completan <code>ENTREGA.md</code></td><td>10 min</td><td>Enlace del repo</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-note" style="margin-top:12px"><strong>Ruta corta (≈ 90 min):</strong> partes 0 a 3 y una entrega reducida (secciones 1, 2 y 5 de <code>ENTREGA.md</code>). Las partes 4 a 6 quedan como trabajo posterior.</p>
+
+    <hr class="div">
+
+    <h2 id="mapa">Mapa de la tienda</h2>
+    <p class="section-note">
+      La tienda no trae identificadores de prueba, así que se ubica cada elemento por su <strong>rol y su texto</strong>, como lo haría una persona.
+      Todos estos localizadores están verificados: cópienlos. <code>tarjeta</code>, <code>carrito</code> y <code>linea</code> son variables que ustedes crean con las dos primeras filas.
+    </p>
+    <div class="table-wrap">
+      <table class="plain wrap">
+        <thead><tr><th>Qué quiero ubicar</th><th>Cómo (Playwright)</th></tr></thead>
+        <tbody>
+          <tr><td>La tarjeta de un producto</td><td><code>const tarjeta = page.locator('.rounded-lg').filter({ has: page.getByRole('heading', { name: 'Mochila escolar', level: 3 }) });</code></td></tr>
+          <tr><td>La cantidad y el botón de esa tarjeta</td><td><code>tarjeta.getByRole('spinbutton')</code> · <code>tarjeta.getByRole('button', { name: 'Agregar' })</code></td></tr>
+          <tr><td>El carrito</td><td><code>const carrito = page.locator('.rounded-lg').filter({ has: page.getByRole('heading', { name: 'Carrito' }) });</code></td></tr>
+          <tr><td>Una línea del carrito y su cantidad</td><td><code>const linea = carrito.getByRole('listitem').filter({ hasText: 'Mochila escolar' });</code> · <code>linea.locator('span')</code></td></tr>
+          <tr><td>Botones de la línea</td><td><code>carrito.getByRole('button', { name: 'Aumentar cantidad de Mochila escolar' })</code> · también <code>Disminuir cantidad de …</code> y <code>Eliminar …</code></td></tr>
+          <tr><td>Código de descuento</td><td><code>carrito.getByPlaceholder('Código de descuento')</code> · <code>carrito.getByRole('button', { name: 'Aplicar' })</code></td></tr>
+          <tr><td>Mensaje del descuento</td><td><code>carrito.locator('p.text-xs')</code></td></tr>
+          <tr><td>Subtotal, IVA y Total</td><td><code>carrito.locator('dt:text-is("Subtotal") + dd')</code> · <code>'dt:text-is("IVA (19%)") + dd'</code> · <code>'dt:text-is("Total") + dd'</code></td></tr>
+          <tr><td>Descuento</td><td><code>carrito.locator('dt:text("Descuento") + dd')</code> (la etiqueta incluye el porcentaje, por eso se busca por una parte del texto)</td></tr>
+          <tr><td>Carrito vacío · botón de pago</td><td><code>carrito.getByText('Tu carrito está vacío.')</code> · <code>carrito.getByRole('button', { name: 'Ir a pagar' })</code></td></tr>
+          <tr><td>Contador del encabezado</td><td><code>page.getByRole('banner').getByText(/artículo\(s\)/)</code></td></tr>
+          <tr><td>Campos del formulario de envío</td><td><code>page.locator('label:text-is("Nombre completo") + input')</code> · también <code>"Correo electrónico"</code> y <code>"Dirección de entrega"</code></td></tr>
+          <tr><td>Confirmar el pedido</td><td><code>page.getByRole('button', { name: 'Confirmar pedido' })</code></td></tr>
+          <tr><td>Pantalla de confirmación</td><td><code>page.getByRole('heading', { name: '¡Pedido confirmado!' })</code> · número: <code>page.getByText(/Número de pedido:/)</code> · <code>page.getByRole('button', { name: 'Volver a la tienda' })</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><span class="label">Dos detalles</span>
+      <p>Playwright <strong>normaliza los espacios</strong> al comparar texto, así que <code>'$ 65.000'</code> funciona aunque la tienda use un espacio especial. Y en el formulario de envío <code>page.getByLabel('Nombre completo')</code> <strong>no encuentra el campo</strong>: pruébenlo y descubran por qué. Es un hallazgo; anótenlo.</p>
+    </div>
+
+    <hr class="div">
+
+    <div class="part-head" id="p0"><h2>Parte 0 · Preparación</h2><span class="chip">15 min</span></div>
+    <ol class="pasos">
+      <li>Una persona del equipo abre la <a href="https://github.com/xaviercardona-ops/qa-automatizacion-lab/generate" target="_blank" rel="noopener">plantilla del laboratorio</a> y presiona <strong>Create repository from template</strong>. Nombre: <code>equipo-N-automatizacion</code> (cambien N). Visibilidad: <strong>Public</strong>. Después, en <em>Settings → Collaborators</em>, agrega a sus compañeros.</li>
+      <li>Cada integrante clona <strong>el repositorio de su equipo</strong> (no la plantilla) y entra a la carpeta:
+<pre class="code"><code>git clone https://github.com/SU-USUARIO/equipo-N-automatizacion.git
+cd equipo-N-automatizacion</code></pre></li>
+      <li>Instalen las dependencias y el navegador de pruebas (la primera vez tarda unos minutos):
+<pre class="code"><code>npm ci
+npx playwright install chromium</code></pre></li>
+      <li>Ejecuten la prueba de humo:
+<pre class="code"><code>npx playwright test 00-humo</code></pre>
+        Debe terminar en <code>1 passed</code>. Luego prueben toda la suite con <code>npx playwright test</code>: verán <code>5 passed</code> y <code>24 skipped</code>. Las "omitidas" son los ejercicios pendientes.</li>
+      <li>Abran la carpeta en el editor (<code>code .</code>) y recorran los archivos de <code>tests/</code>.</li>
+    </ol>
+    <div class="callout"><span class="label">Trabajar en equipo con git</span>
+      <p>Repártanse <strong>archivos distintos</strong> (por ejemplo: carrito, descuentos, checkout, confirmación): así no se pisan. Hagan <code>git pull</code> antes de cada <code>git push</code>, y <code>git add -A</code> y <code>git commit -m "…"</code> con mensajes que digan qué prueba agregaron.</p>
+    </div>
+
+    <hr class="div">
+
+    <div class="part-head" id="p1"><h2>Parte 1 · Ver pasar y ver fallar</h2><span class="chip">10 min</span></div>
+    <p class="section-note">Antes de escribir una sola línea propia, aprendan a leer una prueba y a ver cómo se ve un rojo.</p>
+    <ol class="pasos">
+      <li>Ejecuten el ejemplo resuelto viendo el navegador trabajar:
+<pre class="code"><code>npx playwright test 01-catalogo --headed</code></pre></li>
+      <li>Abran <code>tests/01-catalogo.spec.ts</code> y lean la primera prueba con esta tabla al lado:</li>
+    </ol>
+    <div class="table-wrap">
+      <table class="plain wrap">
+        <thead><tr><th>Línea</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td><code>test('CA1: …', async ({ page }) =&gt; {</code></td><td>Declara una prueba. <code>page</code> es una pestaña de navegador <strong>nueva y limpia solo para esta prueba</strong>: sin carrito ni memoria de las demás.</td></tr>
+          <tr><td><code>await page.goto('/')</code></td><td><strong>Arrange/Act:</strong> abre la tienda. La dirección base está en <code>playwright.config.ts</code>.</td></tr>
+          <tr><td><code>page.getByRole('heading', { level: 3 })</code></td><td><strong>Localizador:</strong> describe <em>qué</em> buscar como lo vería un usuario (un encabezado de nivel 3), no cómo está hecho el HTML.</td></tr>
+          <tr><td><code>await expect(…).toHaveCount(8)</code></td><td><strong>Assert:</strong> comprueba el resultado esperado. Reintenta sola hasta 5 segundos, por eso no hacen falta pausas manuales.</td></tr>
+          <tr><td><code>await</code></td><td>Casi cada línea lleva <code>await</code>: el navegador es asíncrono. Sin él la prueba sigue de largo sin esperar el resultado.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ol class="pasos" start="3">
+      <li><strong>Rómpanla a propósito:</strong> cambien <code>toHaveCount(8)</code> por <code>toHaveCount(9)</code> y ejecútenla otra vez. Lean el error: ¿qué dicen <code>Expected</code> y <code>Received</code>? ¿Qué es el <em>Call log</em>?</li>
+      <li>Abran el reporte con <code>npm run report</code> (se cierra con Ctrl + C). Entren a la prueba roja y miren la captura y la pestaña <strong>Trace</strong>: es la película de la prueba, paso a paso, con la página como estaba en cada momento.</li>
+      <li>Devuelvan el <code>8</code>.</li>
+    </ol>
+    <div class="callout ok"><span class="label">Un hábito para toda la vida</span>
+      <p>Antes de confiar en una prueba, <strong>véanla fallar una vez</strong> (cambien el valor esperado). Una prueba que nunca ha estado en rojo puede no estar probando nada.</p>
+    </div>
+    <p><strong>Respondan en <code>ENTREGA.md</code>, sección 5, o en su cuaderno:</strong> (1) ¿Qué le pasa a la pestaña del navegador cuando termina la prueba, y por qué importa? (2) ¿Por qué la prueba no usa una espera fija? (3) ¿Cómo supo la prueba que algo estaba mal?</p>
+
+    <hr class="div">
+
+    <div class="part-head" id="p2"><h2>Parte 2 · Automatizar el carrito</h2><span class="chip">25 min</span></div>
+    <p class="section-note">Cada criterio de aceptación de su backlog es una prueba en potencia. Ya tienen un ejemplo guiado; ahora escriben ustedes.</p>
+    <ol class="pasos">
+      <li>Lean y ejecuten el <strong>ejemplo guiado</strong> de <code>tests/02-carrito.spec.ts</code> (US-04 · CA1). Fíjense cómo primero ubica la tarjeta del producto y después trabaja dentro de ella.</li>
+      <li>Implementen estas <strong>tres pruebas</strong>: quiten el <code>test.fixme(...)</code>, escriban el cuerpo con Arrange · Act · Assert y ejecútenlas hasta verlas en verde.
+        <ul class="lista" style="margin-top:8px">
+          <li><code>tests/02-carrito.spec.ts</code> · US-04 · CA2 (la tienda avisa con un <code>alert()</code>)</li>
+          <li><code>tests/02-carrito.spec.ts</code> · US-07 · CA2 (quitar el único producto)</li>
+          <li><code>tests/03-descuentos-iva.spec.ts</code> · US-09 · CA1 (el código DESC10)</li>
+        </ul>
+        Para ejecutar solo una: <code>npx playwright test -g "US-07"</code>.</li>
+      <li>Verifiquen cada una <strong>rompiéndola a propósito</strong> una vez, como en la Parte 1.</li>
+    </ol>
+    <div class="callout"><span class="label">Los avisos del navegador (alert)</span>
+      <p>Un <code>alert()</code> bloquea la página hasta que alguien lo atiende. Registren el manejador <strong>antes</strong> de la acción que lo provoca:</p>
+<pre class="code"><code>let aviso = '';
+page.once('dialog', async (dialogo) =&gt; {
+  aviso = dialogo.message();
+  await dialogo.accept();
+});
+// …aquí va la acción que dispara el alert()…
+expect(aviso).toContain('texto que debe decir');</code></pre>
+    </div>
+    <h3>Opcional: grabar para empezar</h3>
+    <p>Ejecuten <code>npm run codegen</code>: se abre la tienda y un grabador que escribe el código mientras ustedes la usan. Sirve para <strong>empezar</strong>, no para terminar: lo grabado casi nunca tiene aserciones, usa posiciones frágiles como <code>.nth(2)</code> y no tiene nombre ni historia. Convertirlo en una prueba de verdad es parte del trabajo: agréguenle un nombre, un <code>expect</code> con sentido y un localizador por tarjeta en vez de por posición.</p>
+    <p><strong>Listo cuando:</strong> las tres pruebas están en verde y las vieron fallar una vez.</p>
+
+    <hr class="div">
+
+    <div class="part-head" id="p3"><h2>Parte 3 · Cazar bugs con pruebas</h2><span class="chip">30 min</span></div>
+    <p class="section-note">Aquí la automatización muestra su valor: una prueba bien escrita encuentra, en un segundo y todas las veces, lo que a mano cuesta minutos. Pero una prueba roja <strong>todavía no</strong> es un bug: es una pregunta.</p>
+    <h3>1. Escriban al menos 4 pruebas "cazabugs"</h3>
+    <p>Elijan 4 o más de esta lista (están marcadas como <code>CAZABUGS</code> en los archivos). Escríbanlas <strong>afirmando lo que dice el criterio de aceptación</strong>, nunca lo que la tienda hace hoy.</p>
+    <div class="table-wrap">
+      <table class="plain wrap">
+        <thead><tr><th>Prueba</th><th>Archivo</th><th>Nivel</th></tr></thead>
+        <tbody>
+          <tr><td>US-04 · CA3 — 4 + 4 mochilas supera el stock</td><td>02-carrito</td><td>2</td></tr>
+          <tr><td>US-05 · CA2 — "+" respeta el stock</td><td>02-carrito</td><td>2</td></tr>
+          <tr><td>US-06 · CA2 — "−" no baja de 1</td><td>02-carrito</td><td>2</td></tr>
+          <tr><td>US-10 · CA2 — un código inválido no borra el descuento</td><td>03-descuentos-iva</td><td>2</td></tr>
+          <tr><td>US-13 · CA3 — no se paga con total cero</td><td>04-checkout</td><td>2</td></tr>
+          <tr><td>US-11 · CA2 y US-12 · CA2 — IVA y total con descuento (con oráculo)</td><td>03-descuentos-iva</td><td>3</td></tr>
+          <tr><td>US-16 · CA1 — el formulario aparece vacío en la compra siguiente</td><td>05-confirmacion</td><td>3</td></tr>
+          <tr><td>US-17 · CA3 — el número de pedido tras recargar</td><td>05-confirmacion</td><td>3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>2. Una prueba roja: ¿y ahora?</h3>
+    <ol class="pasos">
+      <li><strong>Lean el error.</strong> <code>Expected</code> contra <code>Received</code> y las líneas del <em>Call log</em> dicen qué esperaba la prueba y qué encontró.</li>
+      <li><strong>Reprodúzcanlo a mano</strong> en la tienda con los mismos pasos. Si a mano todo está bien, el problema es de la prueba.</li>
+      <li><strong>Revisen la prueba contra el criterio:</strong> ¿afirma exactamente lo que el criterio exige, con datos correctos y un localizador que apunta al elemento correcto?</li>
+      <li><strong>Repítanla</strong> para ver si es estable: <code>npx playwright test -g "US-17" --repeat-each=5</code>. Si el resultado cambia sin tocar nada, es inestable.</li>
+      <li><strong>Descarten el entorno:</strong> ¿falló por la red, un navegador distinto o su máquina?</li>
+    </ol>
+    <div class="table-wrap">
+      <table class="plain wrap">
+        <thead><tr><th>Veredicto</th><th>Cómo se reconoce</th><th>Qué se hace</th></tr></thead>
+        <tbody>
+          <tr><td>Bug del producto</td><td>Se reproduce a mano; la prueba afirma lo que dice el criterio; falla siempre igual.</td><td>Reportarlo (o actualizar su bug en Jira) y dejar la prueba como <strong>fallo esperado</strong>.</td></tr>
+          <tr><td>Defecto de la prueba</td><td>La tienda hace lo correcto y la prueba esperaba otra cosa (dato viejo, localizador equivocado, criterio mal leído).</td><td>Corregir la prueba.</td></tr>
+          <tr><td>Prueba inestable</td><td>A veces pasa y a veces falla sin que cambie nada; <code>--repeat-each</code> da resultados mezclados.</td><td>Encontrar la causa (esperas, datos, orden). Mientras tanto, cuarentena con <code>test.fixme</code>.</td></tr>
+          <tr><td>Entorno</td><td>Falla por la red, la máquina o el navegador; mejora al reintentar o en otra máquina.</td><td>Documentarlo y usar el Plan B de <a href="#problemas">Problemas frecuentes</a>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>3. Documenten cada bug del producto</h3>
+    <ol class="pasos">
+      <li>Confirmen el bug a mano y búsquenlo en los issues de su equipo en Jira; si no lo reportaron, repórtenlo.</li>
+      <li>En la prueba, como <strong>primera línea</strong>, marquen el fallo como esperado con la clave de Jira:
+<pre class="code"><code>test('CA3: …', async ({ page }) =&gt; {
+  test.fail(true, 'PRJ-12 · descripción corta del bug');
+  // …el resto de la prueba, sin cambios…
+});</code></pre></li>
+      <li>Vuelvan a ejecutarla. Ahora cuenta como <code>passed</code> (la terminal la marca con ✘ porque falló, pero estaba <em>esperado</em>) y el reporte conserva la anotación y el error como evidencia.</li>
+      <li>En el issue de Jira agreguen un comentario con el <strong>nombre de la prueba</strong> que lo detecta y una captura del reporte.</li>
+    </ol>
+    <figure>
+      <img src="/lab/reporte-fallo-esperado.jpg" alt="Reporte HTML de Playwright mostrando una prueba con la anotación fail: PRJ-12 y el error Expected 4, Received 8" width="800" height="534" loading="lazy">
+      <figcaption>Un fallo esperado en el reporte: la anotación con la clave de Jira arriba y, abajo, la evidencia (<code>Expected: "4"</code> contra <code>Received: "8"</code>).</figcaption>
+    </figure>
+    <div class="callout"><span class="label">Por qué esto es mejor que dejarla roja o borrarla</span>
+      <p>Una suite roja que nadie arregla entrena a todos a ignorar el rojo. Una prueba borrada olvida el bug. Con <code>test.fail</code> la suite queda verde, el bug queda documentado y, <strong>el día que lo corrijan</strong>, la prueba "pasará" de verdad y Playwright avisará con un error (<em>Expected to fail, but passed</em>): ese es el momento de quitar la anotación.</p>
+    </div>
+    <p><strong>Listo cuando:</strong> 4 o más pruebas cazabugs escritas, cada una con su veredicto, y <code>npx playwright test</code> termina sin fallos inesperados.</p>
+
+    <hr class="div">
+
+    <div class="part-head" id="p4"><h2>Parte 4 · Datos y pruebas heredadas</h2><span class="chip">20 min</span></div>
+    <h3>4a. Pruebas dirigidas por datos (10 min)</h3>
+    <p>Cuando varias pruebas solo cambian el dato, no se copian: se generan desde una tabla. El reporte dice entonces <strong>exactamente qué filas fallan</strong>.</p>
+<pre class="code"><code>const PRODUCTOS = ['Esfero azul', 'Resma de papel carta'];
+
+for (const nombre of PRODUCTOS) {
+  test(`el producto ${nombre} aparece en el catálogo`, async ({ page }) =&gt; {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: nombre, level: 3 })).toBeVisible();
+  });
+}</code></pre>
+    <p>Implementen <strong>una</strong> de estas, con una prueba por cada dato:</p>
+    <ul class="lista">
+      <li><code>03-descuentos-iva.spec.ts</code> · US-09 · CA3: variantes de un código válido.</li>
+      <li><code>04-checkout.spec.ts</code> · US-15 · CA1 a CA3: <code>CORREOS_VALIDOS</code> (la lista ya está en el archivo).</li>
+      <li><code>04-checkout.spec.ts</code> · US-15 · CA4: <code>CORREOS_MAL_FORMADOS</code>.</li>
+    </ul>
+    <p>Cuando fallen solo algunas filas, marquen como fallo esperado <strong>solo esas</strong>. Una pista con datos de juguete:</p>
+<pre class="code"><code>const FILAS = [
+  { valor: 'a', bug: '' },
+  { valor: 'b', bug: 'PRJ-99' },   // esta fila hoy falla por un bug conocido
+];
+for (const { valor, bug } of FILAS) {
+  test(`caso ${valor}`, async ({ page }) =&gt; {
+    test.fail(bug !== '', `${bug} · razón`);   // solo es "fallo esperado" si la fila trae un bug
+    // …
+  });
+}</code></pre>
+    <p>Pregunta para <code>ENTREGA.md</code>: ¿cuántas filas fallaron y qué tienen en común? ¿Es un bug o varios?</p>
+
+    <h3>4b. Pruebas heredadas: ¿qué falló? (10 min)</h3>
+    <p>Un equipo anterior dejó tres pruebas en <code>tests/heredados.spec.ts</code>, en <strong>cuarentena</strong> con <code>test.fixme</code>, porque nadie sabía por qué fallaban. Para cada una (H1, H2, H3):</p>
+    <ol class="pasos">
+      <li>Quítenla de cuarentena (borren su línea <code>test.fixme</code>) y ejecútenla: <code>npx playwright test heredados -g "H1"</code>.</li>
+      <li>Diagnostiquen con el flujo de la Parte 3. Para detectar inestabilidad, repítanla muchas veces: <code>npx playwright test heredados -g "H3" --repeat-each=10</code>.</li>
+      <li>Dejen la prueba en su estado correcto según el veredicto: corregida, documentada como bug conocido o estabilizada.</li>
+      <li>Anoten en <code>ENTREGA.md</code> (sección 3) el veredicto y <strong>cómo lo comprobaron</strong>.</li>
+    </ol>
+    <div class="callout warn"><span class="label">Tentación: arreglarla con una pausa</span>
+      <p>Si una prueba falla "a veces", la solución rápida es <code>await page.waitForTimeout(300)</code>. Pruébenla y midan con <code>--repeat-each=30</code>. Después piensen: ¿cuánto habría que esperar en la máquina de un compañero, en la nube o con una red lenta? ¿Cuánto cuesta sumar 300 ms a cada una de 200 pruebas? Una espera correcta no espera un <em>tiempo</em>: espera una <strong>condición</strong>. Pista: ¿cuándo está realmente lista la página para recibir un clic?</p>
+    </div>
+
+    <hr class="div">
+
+    <div class="part-head" id="p5"><h2>Parte 5 · Page Object</h2><span class="chip">15 min</span></div>
+    <p class="section-note">Miren sus pruebas de las partes 2 a 4: ¿cuántas veces escribieron el mismo localizador de la tarjeta de un producto? Si la tienda cambia ese trozo de HTML, ¿cuántas pruebas habría que corregir?</p>
+<pre class="code"><code>// ANTES: en cada prueba
+const tarjeta = page.locator('.rounded-lg').filter({ has: page.getByRole('heading', { name: 'Esfero azul', level: 3 }) });
+await tarjeta.getByRole('spinbutton').fill('2');
+await tarjeta.getByRole('button', { name: 'Agregar' }).click();
+
+// DESPUÉS: la prueba cuenta la historia y el "cómo" vive en un solo lugar
+await tienda.agregar('Esfero azul', 2);</code></pre>
+    <ol class="pasos">
+      <li>Abran <code>pages/TiendaPage.ts</code>. Cada método tiene un <code>throw new Error('TODO')</code>: reemplácenlo moviendo hacia la clase el código que ya repetían. Implementen <strong>8 o más</strong> métodos (empiecen por los que más usan).</li>
+      <li>Migren <strong>al menos 3 pruebas</strong> para que usen la clase (<code>const tienda = new TiendaPage(page);</code>) y ejecútenlas: deben seguir igual de verdes.</li>
+      <li>Comparen: ¿cuántas líneas ganaron? ¿Qué pasaría si la tienda cambiara el texto de un botón?</li>
+    </ol>
+    <div class="callout"><span class="label">Regla de oro</span>
+      <p>El Page Object ofrece <strong>acciones</strong> (<code>agregar</code>, <code>aplicarCodigo</code>…) y entrega <strong>localizadores</strong> (<code>cantidad</code>, <code>total</code>…). Las aserciones (<code>expect</code>) se quedan en las pruebas, que son las que cuentan qué se espera.</p>
+    </div>
+
+    <hr class="div">
+
+    <div class="part-head" id="p6"><h2>Parte 6 · Reporte y CI</h2><span class="chip">15 min</span></div>
+    <ol class="pasos">
+      <li>Suban el trabajo del equipo:
+<pre class="code"><code>git add -A
+git commit -m "Pruebas automatizadas del equipo N"
+git pull
+git push</code></pre></li>
+      <li>En GitHub abran la pestaña <strong>Actions</strong> de su repositorio: el flujo <em>Pruebas automatizadas</em> corre solo en una máquina limpia. Esperen el resultado (≈ 1 minuto): una marca verde o una X roja.</li>
+      <li>Si salió roja, abran el detalle y lean por qué. ¿Falla en la nube y no en su computador? Piensen en las diferencias (sistema, red, velocidad).</li>
+      <li>Descarguen el artefacto <code>reporte-playwright</code> (un .zip), descomprímanlo y ábranlo con <code>npx playwright show-report CARPETA</code>.</li>
+    </ol>
+    <div class="callout"><span class="label">Sobre los reintentos</span>
+      <p>En la nube la suite reintenta <strong>una vez</strong> las pruebas que fallan. Si una pasa al reintentar, el reporte la marca <em>Flaky</em>. Un reintento <strong>no arregla</strong> una prueba inestable: solo la deja en evidencia.</p>
+    </div>
+    <h3>Retos opcionales <span class="chip bonus">bonus</span></h3>
+    <ul class="lista">
+      <li><strong>Accesibilidad automática.</strong> Instalen <code>npm i -D @axe-core/playwright</code> y revisen una pantalla con pocas líneas:
+<pre class="code"><code>import AxeBuilder from '@axe-core/playwright';
+
+const resultado = await new AxeBuilder({ page }).analyze();
+expect(resultado.violations.map((v) =&gt; `${v.id}: ${v.nodes.length}`)).toEqual([]);</code></pre>
+        Prueben el catálogo y el formulario de envío. ¿Qué encontró que ustedes ya habían reportado? ¿Qué problema de accesibilidad de la historia US-20 <strong>no</strong> encuentra una herramienta automática?</li>
+      <li><strong>Un teléfono.</strong> Con <code>test.use({ viewport: { width: 375, height: 812 } })</code> automaticen un criterio de diseño responsivo del backlog.</li>
+      <li><strong>Trazabilidad.</strong> Agreguen a sus bugs de Jira el nombre de cada prueba que los detecta y a sus tareas del plan la etiqueta <code>automatizado</code>.</li>
+    </ul>
+
+    <hr class="div">
+
+    <h2 id="entrega">Entrega y rúbrica</h2>
+    <p class="section-note">Entreguen <strong>el enlace del repositorio del equipo</strong>. Todo lo escrito va en <code>ENTREGA.md</code>.</p>
+    <ul class="check">
+      <li><span>Mínimo <strong>10 pruebas</strong> implementadas, 4 o más de ellas cazabugs con su veredicto.</span></li>
+      <li><span>Los fallos del producto marcados con <code>test.fail(true, 'CLAVE · …')</code> y comentados en su issue de Jira.</span></li>
+      <li><span>Las <strong>3 pruebas heredadas</strong> diagnosticadas, con la evidencia de cómo lo comprobaron.</span></li>
+      <li><span><code>pages/TiendaPage.ts</code> con 8 o más métodos y 3 pruebas migradas.</span></li>
+      <li><span>La suite <strong>en verde</strong> en GitHub Actions.</span></li>
+      <li><span><code>ENTREGA.md</code> completo: decisión de qué automatizar, bugs detectados, diagnóstico, medidas y reflexión.</span></li>
+    </ul>
+    <div class="table-wrap">
+      <table class="plain wrap">
+        <thead><tr><th>Criterio</th><th>Qué se mira</th><th>Puntos</th></tr></thead>
+        <tbody>
+          <tr><td>Entorno y CI</td><td>La suite corre en su máquina y en GitHub Actions.</td><td>2</td></tr>
+          <tr><td>Calidad de las pruebas</td><td>Nombres claros, Arrange · Act · Assert, aserciones con sentido (no "no se cae"), localizadores robustos, sin pausas fijas, independientes entre sí.</td><td>5</td></tr>
+          <tr><td>Qué se automatiza</td><td>La decisión de <code>ENTREGA.md</code> §1 está justificada con frecuencia, riesgo, estabilidad y facilidad de verificar.</td><td>3</td></tr>
+          <tr><td>Bugs y diagnóstico</td><td>Veredicto correcto por cada rojo, <code>test.fail</code> con clave de Jira, evidencia y comentario en el issue.</td><td>4</td></tr>
+          <tr><td>Pruebas heredadas</td><td>Tres veredictos correctos y comprobados (incluida la repetición para detectar inestabilidad).</td><td>2</td></tr>
+          <tr><td>Mantenibilidad</td><td>Page Object implementado y pruebas migradas.</td><td>2</td></tr>
+          <tr><td>Medidas y reflexión</td><td>Números reales y respuestas propias, no genéricas.</td><td>2</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="div">
+
+    <h2 id="problemas">Problemas frecuentes</h2>
+    <details><summary>Dice que no encuentra <code>npm</code>, <code>npx</code> o <code>node</code></summary>
+      <p>Falta instalar Node.js (versión LTS, 20 o superior) o hay que cerrar y volver a abrir la terminal después de instalarlo. Comprueben con <code>node -v</code>.</p></details>
+    <details><summary><code>npx playwright install</code> tarda mucho o se corta</summary>
+      <p>Es una descarga grande (varios cientos de MB). Reintenten el mismo comando. Si la red de la sala está saturada, instálenlo antes de la clase o pídanle ayuda al docente.</p></details>
+    <details><summary>En Windows PowerShell: "la ejecución de scripts está deshabilitada"</summary>
+      <p>Abran <strong>Símbolo del sistema (cmd)</strong> en lugar de PowerShell, o ejecuten una vez <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code> y vuelvan a intentar.</p></details>
+    <details><summary>Mis pruebas siguen "skipped"</summary>
+      <p>Cada prueba pendiente empieza con <code>test.fixme(true, 'Pendiente de automatizar')</code>. Mientras esa línea exista, la prueba se salta. Impleméntenla y <strong>bórrenla</strong>.</p></details>
+    <details><summary>Todo falla con errores de red, tiempos agotados o de conexión (Plan B)</summary>
+      <p>Si la tienda en línea no responde bien (por ejemplo, porque toda la sala la usa a la vez), corran una copia de la tienda en su computador y apunten las pruebas a ella.</p>
+      <p>En una terminal, fuera de su repositorio de pruebas:</p>
+<pre class="code"><code>git clone https://github.com/xaviercardona-ops/qa-tienda-pruebas.git
+cd qa-tienda-pruebas
+npm ci
+npm run dev</code></pre>
+      <p>Dejen esa terminal abierta. La tienda queda en <code>http://localhost:3000</code> (si ese puerto está ocupado, la terminal muestra cuál eligió: usen ese). En otra terminal, dentro de su repositorio de pruebas:</p>
+<pre class="code"><code># macOS / Linux
+BASE_URL=http://localhost:3000 npx playwright test
+
+# Windows PowerShell
+$env:BASE_URL="http://localhost:3000"; npx playwright test
+
+# Windows cmd (las comillas evitan que se cuele un espacio al final del valor)
+set "BASE_URL=http://localhost:3000" &amp;&amp; npx playwright test</code></pre></details>
+    <details><summary><code>npm run report</code> no abre o dice que el puerto está ocupado</summary>
+      <p>Ya hay un reporte abierto en otra terminal. Ciérrenlo con Ctrl + C o usen otro puerto: <code>npx playwright show-report --port 9400</code>.</p></details>
+    <details><summary>Mi prueba pasa en mi computador pero falla en GitHub Actions</summary>
+      <p>Revisen el detalle del flujo y el reporte descargado. Las causas típicas: una prueba que depende del orden o de datos que quedaron de otra, una espera mal planteada que en una máquina lenta se nota, o una diferencia de sistema operativo. Es un buen motivo para <code>--repeat-each</code>.</p></details>
+    <details><summary>Git: "rejected" al hacer push</summary>
+      <p>Alguien del equipo subió antes. Hagan <code>git pull</code>, resuelvan los conflictos si los hay, y vuelvan a hacer <code>git push</code>.</p></details>
+
+    <hr class="div">
+
+    <h2>Vocabulario</h2>
+    <dl class="vocab">
+      <dt>Localizador</dt><dd>La descripción de cómo encontrar un elemento de la página (por su rol, su texto…). Se prefiere lo que ve el usuario sobre la estructura interna del HTML.</dd>
+      <dt>Aserción</dt><dd>La comprobación del resultado esperado. En Playwright, las de <code>expect(locator)</code> reintentan hasta que se cumplen o se acaba el tiempo.</dd>
+      <dt>Prueba de humo</dt><dd>La prueba mínima que dice si el sistema está vivo y el entorno funciona.</dd>
+      <dt>Oráculo</dt><dd>La fuente que dice qué resultado es el correcto. Debe ser independiente de la aplicación: el requisito, no lo que la app muestra.</dd>
+      <dt>Dirigida por datos</dt><dd>Una misma prueba que se ejecuta con muchas filas de datos, una prueba por fila.</dd>
+      <dt>Inestable (flaky)</dt><dd>Una prueba que a veces pasa y a veces falla sin que nada haya cambiado.</dd>
+      <dt>Cuarentena</dt><dd>Apartar una prueba (<code>test.fixme</code>) mientras se investiga, para que no frene a los demás.</dd>
+      <dt>Fallo esperado</dt><dd>Una prueba que se sabe que falla por un bug conocido (<code>test.fail</code>). Avisa cuando el bug se corrija.</dd>
+      <dt>Page Object</dt><dd>Una clase que concentra los localizadores y acciones de una pantalla, para que las pruebas cuenten la historia y no el HTML.</dd>
+      <dt>CI</dt><dd>Integración continua: ejecutar la suite automáticamente en una máquina limpia cada vez que alguien sube cambios.</dd>
+    </dl>
+
+    <footer>
+      <span>Laboratorio 3.1 · Introducción a la automatización de pruebas</span>
+      <span>Historia → criterio → prueba automatizada → bug</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+// Agrega un botón "Copiar" a cada bloque de código.
+document.querySelectorAll("pre.code").forEach(function (pre) {
+  var btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "copy";
+  btn.textContent = "Copiar";
+  btn.setAttribute("aria-label", "Copiar el código");
+  btn.addEventListener("click", async function () {
+    var texto = pre.querySelector("code").innerText;
+    try {
+      await navigator.clipboard.writeText(texto);
+      btn.textContent = "Copiado";
+    } catch (e) {
+      var r = document.createRange(); r.selectNodeContents(pre.querySelector("code"));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = "Seleccionado: Ctrl/Cmd + C";
+    }
+    setTimeout(function () { btn.textContent = "Copiar"; }, 2200);
+  });
+  pre.appendChild(btn);
+});
+</script>
+</body>
+</html>
